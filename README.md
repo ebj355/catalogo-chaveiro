@@ -63,6 +63,8 @@ Precisa do [Node.js](https://nodejs.org) 18 ou mais novo. O build e a importaç�
 | `npm run importar -- arquivo.html` | Traz um catálogo `.html` (baixado do editor) de volta para `src/` |
 | `npm test` | 16 testes sem navegador: leitura dos dados, build fiel a `src/`, ida e volta sem perdas |
 | `npm run test:e2e` | 32 testes no navegador: catálogo, editor, exportação e importação (veja abaixo) |
+| `.\push-git.ps1` (PowerShell) | Faz commit de tudo e envia para o GitHub (`-Mensagem "texto"` para escolher a mensagem); também envia commits que ainda não subiram |
+| `.\pull-git.ps1` (PowerShell) | Traz do GitHub as mudanças feitas em outro computador |
 
 Para os testes no navegador, rode uma vez `npm install` e `npx playwright install chromium`. Para testar também um catálogo no formato antigo, defina `CATALOGO_ANTIGO=caminho/do/arquivo.html`.
 
