@@ -9,7 +9,7 @@
  *
  * Gera:
  *   dist/catalogo-chaveiro-senador.html
- *       o catálogo completo em UM arquivo: src/catalogo.html com o CSS
+ *       o catálogo completo em UM arquivo: src/modelo-catalogo.html com o CSS
  *       (src/css), os dados (src/dados), as fotos em base64 (src/imagens)
  *       e o código (src/js) colados dentro dele. Funciona offline e é o
  *       arquivo que se abre no editor.
@@ -110,17 +110,19 @@ function blocoDeDados() {
 
 /** Gera dist/catalogo-chaveiro-senador.html. */
 function construirCatalogo() {
-    const modelo = P.lerTexto('src/catalogo.html');
+    const modelo = P.lerTexto('src/modelo-catalogo.html');
     const css = CSS_DO_CATALOGO.map(P.lerTexto).join('\n');
     const js = JS_DO_CATALOGO.map(arquivo => '/* ----- ' + arquivo + ' ----- */\n' + P.lerTexto(arquivo)).join('\n');
 
     // Cada marcador precisa aparecer exatamente uma vez (e fora de outros comentários)
     ['<!-- @@ESTILOS@@ -->', '<!-- @@SCRIPTS@@ -->'].forEach(marcador => {
         const vezes = modelo.split(marcador).length - 1;
-        if (vezes !== 1) throw new Error('src/catalogo.html deve ter o marcador ' + marcador + ' exatamente 1 vez (tem ' + vezes + ')');
+        if (vezes !== 1) throw new Error('src/modelo-catalogo.html deve ter o marcador ' + marcador + ' exatamente 1 vez (tem ' + vezes + ')');
     });
-    // Funções de substituição: evitam que um "$" dentro do código seja interpretado
+    // Funções de substituição: evitam que um "$" dentro do código seja interpretado.
+    // O aviso "este é só o modelo" (entre os marcadores SO-NO-MODELO) não vai para o catálogo pronto.
     const html = modelo
+        .replace(/<!-- @@SO-NO-MODELO:INICIO -->[\s\S]*?<!-- @@SO-NO-MODELO:FIM -->\n*/, '')
         .replace('<!-- @@ESTILOS@@ -->', () => '<style>\n' + css + '</style>')
         .replace('<!-- @@SCRIPTS@@ -->', () => '<script>\n' + blocoDeDados() + '\n\n' + js + '</script>');
 

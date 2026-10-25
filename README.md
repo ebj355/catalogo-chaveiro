@@ -6,6 +6,7 @@ O resultado final é **um único arquivo `.html`**. Ele funciona offline, abre n
 
 | | |
 | --- | --- |
+| **Para ver o catálogo** | dois cliques em [`abrir-catalogo.html`](abrir-catalogo.html) (atalho para o arquivo abaixo) |
 | Catálogo pronto | [`dist/catalogo-chaveiro-senador.html`](dist/catalogo-chaveiro-senador.html) |
 | Editor pronto (arquivo único) | [`dist/editor-catalogo.html`](dist/editor-catalogo.html) |
 | Conteúdo | 9 categorias, 175 produtos, 82 fotos + logo |
@@ -15,15 +16,15 @@ O resultado final é **um único arquivo `.html`**. Ele funciona offline, abre n
 ## Como funciona
 
 ```
- src/  (código-fonte, legível)          ferramentas/build.js            dist/
- ├─ catalogo.html  (esqueleto)   ──┐                               ┌─► catalogo-chaveiro-senador.html
- ├─ css/           (visual)        ├──► junta tudo em 1 arquivo ───┤   (1 arquivo, fotos em base64)
- ├─ js/            (comportamento) │                               └─► editor-catalogo.html
- ├─ dados/         (produtos)      │
- └─ imagens/       (fotos .png/.jpg)┘
-                                                     ▲
-     editor/ ──► você edita e baixa um .html novo ───┘ npm run importar -- arquivo.html
-                                                        (traz as mudanças de volta para src/)
+ src/  (código-fonte, legível)               ferramentas/build.js            dist/
+ ├─ modelo-catalogo.html (esqueleto)   ──┐                               ┌─► catalogo-chaveiro-senador.html
+ ├─ css/                 (visual)        ├──► junta tudo em 1 arquivo ───┤   (1 arquivo, fotos em base64)
+ ├─ js/                  (comportamento) │                               └─► editor-catalogo.html
+ ├─ dados/               (produtos)      │
+ └─ imagens/             (fotos .png/.jpg)┘
+                                                          ▲
+     editor/ ──► você edita e baixa um .html novo ────────┘ npm run importar -- arquivo.html
+                                                             (traz as mudanças de volta para src/)
 ```
 
 - **`src/` é a versão oficial.** Lá cada coisa está separada e comentada: as fotos são arquivos de imagem de verdade, os produtos estão num JSON, e o CSS e o JS estão divididos por assunto.
@@ -33,7 +34,9 @@ O resultado final é **um único arquivo `.html`**. Ele funciona offline, abre n
 
 ## Uso rápido
 
-**Só quero ver ou mandar o catálogo:** abra `dist/catalogo-chaveiro-senador.html` no navegador.
+**Só quero ver ou mandar o catálogo:** dê dois cliques em `abrir-catalogo.html`, ou abra `dist/catalogo-chaveiro-senador.html`. Para mandar a alguém, envie o arquivo de `dist/`.
+
+> Não abra o `src/modelo-catalogo.html`: ele é só o esqueleto que o build preenche e, sozinho, aparece sem visual e sem produtos. Se for aberto, ele mostra um aviso com o link para o catálogo pronto.
 
 **Quero mudar preços, produtos ou fotos:**
 
@@ -68,7 +71,7 @@ Para os testes no navegador, rode uma vez `npm install` e `npx playwright instal
 ```
 catalogo/
 ├── src/                              CÓDIGO-FONTE DO CATÁLOGO
-│   ├── catalogo.html                 Esqueleto da página (o build preenche estilos e scripts)
+│   ├── modelo-catalogo.html          Esqueleto da página (o build preenche estilos e scripts; não abrir direto)
 │   ├── css/
 │   │   ├── catalogo.css              Visual: 16 seções numeradas (capa, páginas, produtos, impressão A4...)
 │   │   └── ajustes-fotos.css         Tamanho e enquadramento de cada foto específica
@@ -100,6 +103,7 @@ catalogo/
 │   ├── importar.js                   catálogo .html → src/
 │   └── lib/projeto.js                Caminhos, pastas de fotos, base64 ↔ arquivo
 │
+├── abrir-catalogo.html               Atalho: abre dist/catalogo-chaveiro-senador.html
 ├── dist/                             ARQUIVOS PRONTOS (gerados; não edite à mão)
 ├── testes/                           unitarios.js e e2e.js
 └── docs/                             COMO-USAR, ESTRUTURA-DADOS, MUDANCAS

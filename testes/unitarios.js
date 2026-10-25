@@ -107,6 +107,7 @@ teste('build: todo produto com "foto" tem a foto em algum mapa (ou está oculto)
 teste('build: catálogo tem os trechos que o editor procura (não injeta código)', () =>
     html.includes('IMAGENS_CUSTOM[p.foto]') && html.includes('IMAGENS_CUSTOM[g.nome]') &&
     html.includes('/* EDITOR_CUSTOM_PHOTO_OVERRIDE_V3 */') && html.includes('CATALOGO_EDITOR_FOTOS_V2'));
+teste('build: aviso "este é só o modelo" não vai para o catálogo pronto', () => !html.includes('SO-NO-MODELO') && !html.includes('Este é só o modelo'));
 teste('build: marcadores <!-- @@...@@ --> foram todos substituídos', () => !html.includes('<!-- @@ESTILOS@@ -->') && !html.includes('<!-- @@SCRIPTS@@ -->') && html.includes('<style>') && html.includes('const CATEGORIAS = ['));
 
 /* ---------------- ida e volta: importar o catálogo gerado ---------------- */

@@ -4,7 +4,7 @@ Guia para quem vai **mostrar** o catálogo e para quem vai **atualizar** produto
 
 ## 1. Mostrar o catálogo
 
-Abra `dist/catalogo-chaveiro-senador.html` no navegador do celular ou do computador. Não precisa de internet; só as fontes vêm do Google quando há conexão.
+Dê dois cliques em `abrir-catalogo.html` (na pasta do projeto) ou abra `dist/catalogo-chaveiro-senador.html` no navegador do celular ou do computador. O `src/modelo-catalogo.html` **não** é o catálogo: é só o esqueleto usado pelo build. Não precisa de internet; só as fontes vêm do Google quando há conexão.
 
 <img src="imagens/catalogo-capa.png" width="260" alt="Capa do catálogo"> <img src="imagens/catalogo-fechaduras.png" width="260" alt="Página de fechaduras">
 
