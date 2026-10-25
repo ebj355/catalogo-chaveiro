@@ -1,0 +1,1724 @@
+<!DOCTYPE html>
+<!--
+    =====================================================================
+    EDITOR DO CATÁLOGO - CHAVEIRO SENADOR
+    =====================================================================
+    Ferramenta que roda só no navegador (nada é enviado para servidor).
+
+    Como usar:
+      1. Abra este arquivo no navegador (duplo clique).
+      2. "Carregar catálogo (.html)" e escolha dist/catalogo-chaveiro-senador.html.
+      3. Edite categorias, produtos, preços e fotos.
+      4. "Baixar catálogo atualizado": baixa um novo .html já com as mudanças.
+      5. (Opcional, para manter o código-fonte em dia)
+         npm run importar -- caminho/do/arquivo-baixado.html
+
+    Arquivos do editor:
+      css/editor.css            visual escuro do editor
+      js/declaracoes.js         lê/troca "const NOME = ..." dentro do catálogo
+      js/estado.js              dados carregados (categorias, fotos...) e tabelas fixas
+      js/util.js                funções pequenas (escape, slug, ids, campos)
+      js/fotos.js               qual foto mostrar na pré-visualização
+      js/carregar.js            abre o arquivo e lê os dados
+      js/render-produtos.js     cartão de produto comum
+      js/render-fechaduras.js   grupos de fechadura e seus itens
+      js/render-categorias.js   cartões das categorias (abre/fecha, move, exclui)
+      js/exportar.js            monta e baixa o catálogo atualizado
+      js/app.js                 liga os botões da tela
+
+    "npm run build" também gera dist/editor-catalogo.html: este mesmo
+    editor em um único arquivo (para mandar para alguém sem a pasta).
+    =====================================================================
+-->
+<html lang="pt-BR">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Editor do Catálogo — Chaveiro Senador</title>
+<style>
+/* ----- editor/css/editor.css ----- */
+/**
+ * =====================================================================
+ * EDITOR.CSS - VISUAL DO EDITOR DO CATÁLOGO
+ * =====================================================================
+ * Tema escuro, para não confundir com o catálogo (que é claro).
+ *
+ * Índice:
+ *   1. Cores                       6. Produtos
+ *   2. Barra do topo e botões      7. Grupos de fechadura
+ *   3. Área principal              8. Botões de adicionar e avisos
+ *   4. Cartão de categoria         9. Peças que eram estilo inline
+ *   5. Campos da categoria        10. Telas pequenas
+ * =====================================================================
+ */
+
+/* =========================================================
+   1. CORES (tema escuro com detalhes em latão)
+   ========================================================= */
+:root{
+  --bg: #16181c;
+  --panel: #1e2126;
+  --panel-2: #262a31;
+  --border: #33373d;
+  --text: #e8e6e1;
+  --text-dim: #9a9a94;
+  --brass: #c99a4a;
+  --brass-light: #e7c07d;
+  --danger: #c0553f;
+  --danger-light: #e07a63;
+  --ok: #5a9464;
+}
+*{ box-sizing:border-box; }
+body{
+  margin:0;
+  background: var(--bg);
+  color: var(--text);
+  font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif;
+  line-height:1.4;
+}
+/* =========================================================
+   2. BARRA DO TOPO E BOTÕES
+   ========================================================= */
+header{
+  position:sticky; top:0; z-index:50;
+  background: linear-gradient(180deg, #1a1c20, #17181b);
+  border-bottom: 1px solid var(--border);
+  padding: 14px 20px;
+  display:flex; align-items:center; justify-content:space-between;
+  flex-wrap:wrap; gap:10px;
+}
+header h1{
+  font-size: 17px; margin:0; font-weight:700; letter-spacing:.2px;
+  color: var(--brass-light);
+}
+header h1 span{ color: var(--text-dim); font-weight:400; font-size:13px; display:block; margin-top:2px; }
+.toolbar{ display:flex; gap:8px; flex-wrap:wrap; }
+button, .btn{
+  font: inherit; cursor:pointer; border:none; border-radius:8px;
+  padding: 9px 14px; font-size:13.5px; font-weight:600;
+  display:inline-flex; align-items:center; gap:6px;
+  transition: filter .15s ease, transform .05s ease;
+}
+button:active{ transform: translateY(1px); }
+.btn-brass{ background: var(--brass); color:#20140a; }
+.btn-brass:hover{ filter:brightness(1.08); }
+.btn-ghost{ background: var(--panel-2); color: var(--text); border:1px solid var(--border); }
+.btn-ghost:hover{ filter:brightness(1.15); }
+.btn-danger{ background: transparent; color: var(--danger-light); border:1px solid var(--danger); }
+.btn-danger:hover{ background: rgba(192,85,63,0.12); }
+.btn-sm{ padding:6px 10px; font-size:12.5px; }
+input[type=file]{ display:none; }
+
+/* =========================================================
+   3. ÁREA PRINCIPAL E ESTADO VAZIO
+   ========================================================= */
+main{ max-width: 980px; margin: 0 auto; padding: 24px 20px 80px; }
+
+#empty-state{
+  text-align:center; padding: 80px 20px; color: var(--text-dim);
+}
+#empty-state .big{ font-size:15px; color:var(--text); margin-bottom:10px; }
+
+.status{
+  font-size: 12.5px; color: var(--text-dim); margin-top:4px;
+}
+.status.ok{ color: var(--ok); }
+.status.err{ color: var(--danger-light); }
+
+/* =========================================================
+   4. CARTÃO DE CATEGORIA (cabeçalho clicável que abre/fecha)
+   ========================================================= */
+.cat-card{
+  background: var(--panel);
+  border: 1px solid var(--border);
+  border-radius: 14px;
+  margin-bottom: 16px;
+  overflow:hidden;
+}
+.cat-head{
+  display:flex; align-items:center; gap:12px;
+  padding: 14px 16px;
+  cursor:pointer;
+  user-select:none;
+}
+.cat-head:hover{ background: rgba(255,255,255,0.02); }
+.cat-icon-badge{
+  font-size:22px; width:38px; height:38px; flex:0 0 38px;
+  display:flex; align-items:center; justify-content:center;
+  background: var(--panel-2); border-radius:10px;
+}
+.cat-head-info{ flex:1; min-width:0; }
+.cat-head-info .name{ font-weight:700; font-size:15px; color: var(--brass-light); }
+.cat-head-info .meta{ font-size:12px; color:var(--text-dim); margin-top:2px; }
+.cat-move{ display:flex; flex-direction:column; gap:2px; }
+.cat-move-btn{
+  width:22px; height:16px; padding:0; font-size:9px; line-height:1;
+  background: var(--panel-2); border:1px solid var(--border); border-radius:4px;
+  color: var(--text-dim); display:flex; align-items:center; justify-content:center;
+}
+.cat-move-btn:hover{ color: var(--brass-light); border-color: var(--brass); }
+.cat-move-btn:disabled{ opacity:.3; cursor:default; }
+.chev{ font-size:13px; color: var(--text-dim); transition: transform .15s ease; }
+.cat-card.open .chev{ transform: rotate(90deg); }
+
+.cat-body{ display:none; padding: 0 16px 18px; border-top:1px solid var(--border); }
+.cat-card.open .cat-body{ display:block; }
+
+/* =========================================================
+   5. CAMPOS DA CATEGORIA (ícone, nome, descrição, id)
+   ========================================================= */
+.field-grid{
+  display:grid; grid-template-columns: 90px 1fr; gap:8px 12px;
+  align-items:center; margin: 14px 0;
+}
+.field-grid label{ font-size:12.5px; color:var(--text-dim); }
+.field-grid input, .field-grid textarea{
+  width:100%; background: var(--panel-2); border:1px solid var(--border);
+  color: var(--text); border-radius:8px; padding:8px 10px; font: inherit; font-size:13.5px;
+}
+.field-grid textarea{ resize:vertical; min-height:38px; }
+.id-hint{ font-size:11px; color:var(--text-dim); grid-column:2; margin-top:-4px; }
+
+/* =========================================================
+   6. PRODUTOS: cartão com caixa de foto e campos
+   ========================================================= */
+.products-title{
+  display:flex; align-items:center; justify-content:space-between;
+  margin: 18px 0 10px;
+}
+.products-title h3{ margin:0; font-size:13px; color:var(--text-dim); text-transform:uppercase; letter-spacing:.5px; }
+
+.product-card{
+  background: var(--panel-2);
+  border:1px solid var(--border);
+  border-radius:12px;
+  padding: 12px;
+  margin-bottom:10px;
+  display:flex; gap:12px;
+}
+.photo-box{
+  flex: 0 0 76px; width:76px; height:76px;
+  border-radius:10px; overflow:hidden;
+  background: repeating-linear-gradient(45deg,#2a2d33,#2a2d33 6px,#25272c 6px,#25272c 12px);
+  display:flex; align-items:center; justify-content:center;
+  cursor:pointer; position:relative; border:1px dashed var(--border);
+}
+.photo-box img{ width:100%; height:100%; object-fit:cover; display:block; }
+.photo-box .ph-label{ font-size:10.5px; color:var(--text-dim); text-align:center; padding:4px; }
+.photo-box:hover{ border-color: var(--brass); }
+.photo-box.hidden{ display:none; }
+.photo-box .remove-photo{
+  position:absolute; top:2px; right:2px; background:rgba(0,0,0,.6);
+  color:#fff; border-radius:50%; width:18px; height:18px; font-size:11px;
+  display:flex; align-items:center; justify-content:center;
+}
+
+.product-fields{ flex:1; min-width:0; display:grid; grid-template-columns: 1fr 1fr; gap:8px; }
+.product-fields .full{ grid-column: 1 / -1; }
+.product-fields label{ font-size:11px; color:var(--text-dim); display:block; margin-bottom:2px; }
+.product-fields input, .product-fields textarea{
+  width:100%; background: var(--panel); border:1px solid var(--border);
+  color: var(--text); border-radius:7px; padding:7px 9px; font: inherit; font-size:13px;
+}
+.product-fields textarea{ resize:vertical; min-height:34px; }
+.product-actions{ flex:0 0 auto; display:flex; flex-direction:column; gap:6px; justify-content:flex-start; }
+
+/* Uma foto compartilhada por todos os itens do grupo */
+/* =========================================================
+   7. GRUPOS DE FECHADURA
+   ========================================================= */
+.lock-group-card{
+  background: var(--panel-2);
+  border:1px solid var(--border);
+  border-radius:12px;
+  padding: 12px;
+  margin-bottom:14px;
+}
+.lock-group-header{ display:flex; gap:12px; align-items:flex-start; }
+.lock-group-photo-box{ flex:0 0 76px; width:76px; height:76px; }
+.lock-group-header-fields{ flex:1; min-width:0; display:grid; grid-template-columns:1fr 1fr; gap:8px; }
+.lock-group-header-fields label{ font-size:11px; color:var(--text-dim); display:block; margin-bottom:2px; }
+.lock-group-header-fields input, .lock-group-header-fields select{
+  width:100%; background: var(--panel); border:1px solid var(--border);
+  color: var(--text); border-radius:7px; padding:7px 9px; font: inherit; font-size:13px;
+}
+.lock-group-header-actions{ flex:0 0 auto; }
+.lock-group-items-list{ margin-top:12px; padding-top:10px; border-top:1px dashed var(--border); }
+.lock-item-row{ display:flex; gap:10px; align-items:flex-start; padding:8px 0; }
+.lock-item-photo-box{ flex:0 0 76px; width:76px; height:76px; }
+.lock-item-photo-box.hidden{ display:none; }
+.lock-group-photo-box, .lock-item-photo-box{ flex:0 0 76px; width:76px; height:76px; }
+
+.lock-item-row + .lock-item-row{ border-top:1px solid var(--border); }
+.lock-item-fields{ flex:1; min-width:0; }
+.lock-item-del{ flex:0 0 auto; margin-top:16px; }
+.add-product-btn.btn-sm{ margin-top:10px; padding:8px; font-size:12.5px; }
+
+/* =========================================================
+   8. BOTÕES DE ADICIONAR E AVISOS
+   ========================================================= */
+.add-product-btn{ width:100%; margin-top:4px; justify-content:center; border:1px dashed var(--border); background:transparent; color:var(--text-dim); }
+.add-product-btn:hover{ color: var(--brass-light); border-color: var(--brass); }
+
+.cat-footer-actions{ display:flex; justify-content:flex-end; margin-top:14px; }
+
+#add-category-btn{ width:100%; margin-top: 4px; justify-content:center; padding:14px; border:1px dashed var(--border); background:transparent; color:var(--text-dim); border-radius:14px; }
+#add-category-btn:hover{ color: var(--brass-light); border-color: var(--brass); }
+
+.warn-banner{
+  background: rgba(201,154,74,0.1); border:1px solid rgba(201,154,74,0.35);
+  color: var(--brass-light); border-radius:10px; padding:10px 14px; font-size:12.5px;
+  margin-bottom:18px; display:none;
+}
+.warn-banner.show{ display:block; }
+
+.lock-note{ font-size:11.5px; color:var(--text-dim); margin-top:6px; }
+
+/* =========================================================
+   9. PEÇAS QUE ANTES ERAM ESTILO INLINE NO JAVASCRIPT
+   ========================================================= */
+/* Select do modo de foto ("Individual" / "Uma foto para o grupo") */
+.campo-select{
+  width:100%; background: var(--panel); border:1px solid var(--border);
+  color: var(--text); border-radius:7px; padding:7px 9px; font: inherit; font-size:13px;
+}
+/* Rótulo pequeno em cima de um campo */
+.rotulo-campo{ font-size:11px; color:var(--text-dim); display:block; margin-bottom:2px; }
+/* Coluna com a caixa de foto + botão "Escolher foto" (grupos e itens de fechadura) */
+.coluna-foto{ flex:0 0 110px; display:flex; flex-direction:column; gap:6px; }
+.coluna-foto .btn-ghost{ width:100%; justify-content:center; }
+/* Coluna do modo de foto de um item de fechadura */
+.coluna-modo{ flex:0 0 150px; min-width:150px; }
+
+/* =========================================================
+   10. TELAS PEQUENAS (celular)
+   ========================================================= */
+@media (max-width: 640px){
+  .product-card, .lock-item-row, .lock-group-header{ flex-wrap:wrap; }
+  .product-fields, .lock-group-header-fields{ grid-template-columns: 1fr; flex-basis:100%; }
+  .coluna-modo{ flex-basis:100%; }
+  .field-grid{ grid-template-columns: 1fr; }
+  .id-hint{ grid-column:1; }
+}
+</style>
+</head>
+<body>
+
+<!-- Barra fixa do topo: título e ações principais -->
+<header>
+  <h1>Editor do Catálogo <span>Chaveiro Senador — ferramenta externa (roda só no seu navegador)</span></h1>
+  <div class="toolbar">
+    <input type="file" id="file-input" accept=".html">
+    <button class="btn-brass" id="load-btn">Carregar catálogo (.html)</button>
+    <button class="btn-ghost" id="save-btn" disabled>Baixar catálogo atualizado</button>
+  </div>
+</header>
+
+<main>
+  <!-- Mostrado enquanto nenhum catálogo foi carregado -->
+  <div id="empty-state">
+    <div class="big">Nenhum catálogo carregado ainda.</div>
+    <div>Clique em "Carregar catálogo (.html)" e selecione o arquivo do catálogo que você já tem.<br>
+    Tudo é processado localmente no seu navegador — nada é enviado para nenhum servidor.</div>
+  </div>
+
+  <!-- Área de edição: aviso de versão antiga, lista de categorias e botão de nova categoria -->
+  <div id="editor-root" hidden>
+    <div class="warn-banner" id="parse-warning"></div>
+    <div id="categories-list"></div>
+    <button id="add-category-btn">+ Adicionar nova categoria</button>
+  </div>
+</main>
+
+<!-- A ordem importa: cada arquivo usa o que os anteriores definiram -->
+<script>
+/* ----- editor/js/declaracoes.js ----- */
+/**
+ * =====================================================================
+ * DECLARACOES.JS - LER E SUBSTITUIR DECLARAÇÕES "const NOME = ..." NO HTML
+ * =====================================================================
+ *
+ * O catálogo é um único arquivo .html que guarda os dados dentro do
+ * <script>, assim:
+ *
+ *     const CATEGORIAS = [ ...produtos... ];
+ *     const IMAGENS_CHAVE = { "yale": "data:image/png;base64,..." };
+ *
+ * Este arquivo sabe ENCONTRAR esses blocos (contando colchetes/chaves e
+ * ignorando o que está dentro de textos) e TROCAR o conteúdo deles sem
+ * mexer no resto do arquivo.
+ *
+ * É usado em dois lugares, por isso funciona nos dois ambientes:
+ *   - no navegador, pelo editor (fica em window.Declaracoes)
+ *   - no Node.js, pelas ferramentas de build/importação (require)
+ * =====================================================================
+ */
+(function (raiz, fabrica) {
+    'use strict';
+    var api = fabrica();
+    if (typeof module !== 'undefined' && module.exports) module.exports = api; // Node.js
+    else raiz.Declaracoes = api;                                                 // navegador
+})(typeof self !== 'undefined' ? self : this, function () {
+    'use strict';
+
+    /**
+     * Localiza o bloco "const NOME = [ ... ];" ou "const NOME = { ... };".
+     *
+     * Percorre o texto caractere a caractere contando a profundidade de
+     * colchetes/chaves. Tudo o que estiver dentro de aspas simples, duplas
+     * ou crase é ignorado, então um "}" dentro de um texto não confunde a
+     * contagem (as fotos em base64 e as descrições têm todo tipo de caractere).
+     *
+     * @param {string} texto conteúdo completo do arquivo .html
+     * @param {string} nome  nome da constante (ex.: "CATEGORIAS")
+     * @returns {null|{inicioDeclaracao:number, inicioConteudo:number, fimConteudo:number, fim:number, conteudo:string}}
+     *          null se não encontrar; senão as posições:
+     *          - inicioDeclaracao: onde começa "const NOME = "
+     *          - inicioConteudo / fimConteudo: o literal [..] ou {..} (fim exclusivo)
+     *          - fim: logo depois do ";" final
+     *          - conteudo: o texto do literal
+     */
+    function extrair(texto, nome) {
+        var marcador = 'const ' + nome + ' = ';
+        var pos = texto.indexOf(marcador);
+        if (pos === -1) return null;
+
+        var inicio = pos + marcador.length;
+        var abre = texto[inicio];
+        if (abre !== '[' && abre !== '{') return null; // só lida com arrays e objetos
+        var fecha = abre === '[' ? ']' : '}';
+
+        var profundidade = 0;
+        var emTexto = false;   // estamos dentro de "...", '...' ou `...`?
+        var aspas = '';        // qual aspa abriu o texto atual
+        var escapado = false;  // o caractere anterior foi uma barra invertida?
+        var i = inicio;
+
+        for (; i < texto.length; i++) {
+            var c = texto[i];
+            if (emTexto) {
+                if (escapado) escapado = false;
+                else if (c === '\\') escapado = true;
+                else if (c === aspas) emTexto = false;
+                continue;
+            }
+            if (c === '"' || c === "'" || c === '`') { emTexto = true; aspas = c; continue; }
+            if (c === abre) profundidade++;
+            else if (c === fecha) {
+                profundidade--;
+                if (profundidade === 0) { i++; break; }
+            }
+        }
+
+        // avança até o ";" que encerra a declaração
+        var fim = i;
+        while (fim < texto.length && texto[fim] !== ';') fim++;
+        fim++;
+
+        return {
+            inicioDeclaracao: pos,
+            inicioConteudo: inicio,
+            fimConteudo: i,
+            fim: fim,
+            conteudo: texto.slice(inicio, i)
+        };
+    }
+
+    /**
+     * Transforma o texto de um literal JavaScript em valor.
+     * Usa Function (e não JSON.parse) porque o catálogo original foi escrito
+     * à mão em JS: tem chaves sem aspas e vírgulas no final dos itens.
+     * Só é chamado com o conteúdo do próprio arquivo do catálogo que o
+     * usuário escolheu abrir.
+     *
+     * @param {string} literal ex.: '{ yale: "data:..." }'
+     * @returns {*} o objeto/array correspondente
+     */
+    function avaliar(literal) {
+        // eslint-disable-next-line no-new-func
+        return (new Function('return (' + literal + ');'))();
+    }
+
+    /**
+     * Lê uma declaração e já devolve o valor, ou null se não existir
+     * ou não puder ser avaliada.
+     * @param {string} texto
+     * @param {string} nome
+     * @returns {*|null}
+     */
+    function ler(texto, nome) {
+        var d = extrair(texto, nome);
+        if (!d) return null;
+        try { return avaliar(d.conteudo); } catch (e) { return null; }
+    }
+
+    /**
+     * Substitui o conteúdo de "const NOME = ..." por um novo valor (em JSON).
+     * Se a declaração não existir, devolve o texto sem alteração.
+     * @param {string} texto
+     * @param {string} nome
+     * @param {*} valor qualquer valor serializável em JSON
+     * @returns {string} o texto atualizado
+     */
+    function substituir(texto, nome, valor) {
+        var d = extrair(texto, nome);
+        if (!d) return texto;
+        return texto.slice(0, d.inicioConteudo) + JSON.stringify(valor, null, 2) + texto.slice(d.fimConteudo);
+    }
+
+    /**
+     * Lista os nomes de todos os mapas de fotos "const IMAGENS_XXX = {...}"
+     * que existem no arquivo, na ordem em que aparecem.
+     * @param {string} texto
+     * @returns {string[]} ex.: ["IMAGENS_CHAVEIRINHO", "IMAGENS_CHAVE", ...]
+     */
+    function nomesDosMapasDeImagens(texto) {
+        var nomes = [];
+        var re = /const (IMAGENS_[A-Z_]+)\s*=\s*/g;
+        var m;
+        while ((m = re.exec(texto)) !== null) {
+            if (nomes.indexOf(m[1]) === -1) nomes.push(m[1]);
+        }
+        return nomes;
+    }
+
+    return {
+        extrair: extrair,
+        avaliar: avaliar,
+        ler: ler,
+        substituir: substituir,
+        nomesDosMapasDeImagens: nomesDosMapasDeImagens
+    };
+});
+</script>
+<script>
+/* ----- editor/js/estado.js ----- */
+/**
+ * =====================================================================
+ * ESTADO.JS - O QUE O EDITOR GUARDA NA MEMÓRIA ENQUANTO VOCÊ EDITA
+ * =====================================================================
+ *
+ * Tudo fica em window.Editor (um "espaço de nomes" compartilhado pelos
+ * outros arquivos do editor). Nada é salvo no navegador: ao fechar a
+ * aba sem baixar o catálogo, as mudanças são perdidas.
+ * =====================================================================
+ */
+(function (raiz) {
+    'use strict';
+
+    var Editor = raiz.Editor = raiz.Editor || {};
+
+    /**
+     * Dados do catálogo carregado. São MODIFICADOS diretamente pelos campos
+     * da tela e regravados no arquivo na hora de exportar.
+     */
+    Editor.estado = {
+        rawHtml: '',          // texto completo do arquivo carregado (base da exportação)
+        categorias: null,     // CATEGORIAS: array de categorias, cada uma com seus produtos
+        imagensCustom: {},    // IMAGENS_CUSTOM: fotos novas/trocadas { chave: dataURL }
+        imagensOcultas: {},   // IMAGENS_OCULTAS: fotos removidas { chave: true } ou { "group:<nome>": true }
+        tamanhosCustom: {},   // TAMANHOS_CUSTOM: largura (px) da foto de cada grupo de fechadura
+        allImageMaps: {}      // todos os IMAGENS_XXX do arquivo, só para pré-visualizar as fotos
+    };
+
+    /** Opções de tamanho da foto de um grupo de fechadura no catálogo (largura em px). */
+    Editor.TAMANHOS_GRUPO = [
+        { valor: '', label: 'Padrão' },
+        { valor: '110', label: 'Pequena' },
+        { valor: '150', label: 'Média' },
+        { valor: '190', label: 'Grande' }
+    ];
+
+    /**
+     * Em quais mapas de fotos cada categoria procura a foto original.
+     * Deve bater com FOTOS_NATIVAS em src/js/fotos.js do catálogo.
+     * Nunca procuramos em "qualquer" mapa: a chave "yale" existe em
+     * IMAGENS_CHAVE e em IMAGENS_CADEADO, com fotos diferentes.
+     */
+    Editor.MAPAS_POR_CATEGORIA = {
+        'copia-chaves': ['IMAGENS_CHAVE'],
+        'chaveirinho': ['IMAGENS_CHAVEIRINHO'],
+        'controle-portao': ['IMAGENS_CONTROLE'],
+        'bateria': ['IMAGENS_BATERIA'],
+        'cadeados': ['IMAGENS_CADEADO'],
+        'miolos': ['IMAGENS_MIOLO', 'IMAGENS_GAVETA', 'IMAGENS_MIOLO_GRANDE', 'IMAGENS_MIOLO_TETRA'],
+        'aberturas': ['IMAGENS_ABERTURAS'],
+        'chaves-codificadas': ['IMAGENS_CODIFICADAS']
+    };
+
+    /** Elementos da página usados por vários arquivos (preenchido em app.js). */
+    Editor.dom = {};
+})(window);
+</script>
+<script>
+/* ----- editor/js/util.js ----- */
+/**
+ * =====================================================================
+ * UTIL.JS - FUNÇÕES PEQUENAS USADAS EM TODO O EDITOR
+ * =====================================================================
+ */
+(function (raiz) {
+    'use strict';
+
+    var Editor = raiz.Editor;
+
+    /** Escapa texto para colocar dentro de HTML (& < >). */
+    function escapeHtml(texto) {
+        return String(texto)
+            .replace(/&/g, '&amp;')
+            .replace(/</g, '&lt;')
+            .replace(/>/g, '&gt;');
+    }
+
+    /** Escapa texto para colocar dentro de um atributo HTML entre aspas duplas. */
+    function escapeAttr(texto) {
+        return escapeHtml(texto).replace(/"/g, '&quot;');
+    }
+
+    /**
+     * Gera um id a partir do nome ("Cópia de Chaves" -> "copia-de-chaves").
+     * Usado como id interno de categorias novas.
+     */
+    function slugify(texto) {
+        return (texto || '')
+            .toLowerCase()
+            .normalize('NFD').replace(/[̀-ͯ]/g, '')
+            .replace(/[^a-z0-9]+/g, '-')
+            .replace(/(^-|-$)/g, '') || ('categoria-' + Date.now());
+    }
+
+    /** Chave única para uma foto nova (ex.: "custom_lx3k9a_4fj2c"). */
+    function uniqueFotoKey() {
+        return 'custom_' + Date.now().toString(36) + '_' + Math.random().toString(36).slice(2, 7);
+    }
+
+    /**
+     * Junta produtos SEGUIDOS com o mesmo "grupo", guardando a posição de
+     * cada um na lista original (mesma regra do catálogo).
+     * @returns {{nome:string, itens:{prod:object, prodIdx:number}[]}[]}
+     */
+    function agruparConsecutivos(produtos) {
+        var grupos = [];
+        var atual = null;
+        produtos.forEach(function (prod, prodIdx) {
+            if (!atual || atual.nome !== prod.grupo) {
+                atual = { nome: prod.grupo, itens: [] };
+                grupos.push(atual);
+            }
+            atual.itens.push({ prod: prod, prodIdx: prodIdx });
+        });
+        return grupos;
+    }
+
+    /**
+     * Cria um campo (rótulo + input/textarea) ligado a uma propriedade do
+     * produto: cada tecla digitada atualiza prod[campo]. Campo vazio é
+     * apagado do produto (para não gravar "condicao": "" no catálogo).
+     *
+     * @param {object} prod        produto que será alterado
+     * @param {string} rotulo      texto do rótulo
+     * @param {string} campo       nome da propriedade (nome, preco, desc...)
+     * @param {boolean} inteiro    ocupa a linha inteira da grade?
+     * @param {boolean} multilinha usa <textarea> em vez de <input>?
+     * @returns {HTMLDivElement}
+     */
+    function campoDoProduto(prod, rotulo, campo, inteiro, multilinha) {
+        var bloco = document.createElement('div');
+        if (inteiro) bloco.className = 'full';
+
+        var label = document.createElement('label');
+        label.textContent = rotulo;
+        bloco.appendChild(label);
+
+        var entrada = document.createElement(multilinha ? 'textarea' : 'input');
+        if (!multilinha) entrada.type = 'text';
+        entrada.value = prod[campo] || '';
+        entrada.addEventListener('input', function (e) {
+            var valor = e.target.value;
+            if (valor === '') delete prod[campo];
+            else prod[campo] = valor;
+        });
+        bloco.appendChild(entrada);
+        return bloco;
+    }
+
+    /**
+     * Lê uma foto escolhida pelo usuário e devolve como data URL
+     * (o formato em que as fotos ficam dentro do catálogo).
+     * @param {File} arquivo
+     * @param {function(string)} pronto chamado com o data URL
+     */
+    function lerFoto(arquivo, pronto) {
+        var leitor = new FileReader();
+        leitor.onload = function (evt) { pronto(evt.target.result); };
+        leitor.readAsDataURL(arquivo);
+    }
+
+    /** Cria um <input type=file> invisível que aceita só imagens. */
+    function seletorDeFoto() {
+        var input = document.createElement('input');
+        input.type = 'file';
+        input.accept = 'image/*';
+        input.style.display = 'none';
+        return input;
+    }
+
+    /** Botão "×" que fica no canto da foto para removê-la. */
+    function botaoRemoverFoto(titulo, aoClicar) {
+        var rm = document.createElement('button');
+        rm.type = 'button';
+        rm.className = 'remove-photo';
+        rm.textContent = '×';
+        rm.title = titulo;
+        rm.addEventListener('click', function (ev) {
+            ev.stopPropagation(); // não abre o seletor de foto da caixa
+            aoClicar();
+        });
+        return rm;
+    }
+
+    Editor.util = {
+        escapeHtml: escapeHtml,
+        escapeAttr: escapeAttr,
+        slugify: slugify,
+        uniqueFotoKey: uniqueFotoKey,
+        agruparConsecutivos: agruparConsecutivos,
+        campoDoProduto: campoDoProduto,
+        lerFoto: lerFoto,
+        seletorDeFoto: seletorDeFoto,
+        botaoRemoverFoto: botaoRemoverFoto
+    };
+})(window);
+</script>
+<script>
+/* ----- editor/js/fotos.js ----- */
+/**
+ * =====================================================================
+ * FOTOS.JS - QUAL FOTO MOSTRAR NA PRÉ-VISUALIZAÇÃO DO EDITOR
+ * =====================================================================
+ *
+ * Reproduz a mesma escolha de foto que o catálogo faz (src/js/fotos.js),
+ * para o que aparece no editor ser o que vai aparecer no catálogo:
+ *   - foto removida (IMAGENS_OCULTAS / semFoto)  -> sem foto
+ *   - foto trocada no editor (IMAGENS_CUSTOM)    -> vence a original
+ *   - foto original do mapa da categoria
+ * =====================================================================
+ */
+(function (raiz) {
+    'use strict';
+
+    var Editor = raiz.Editor;
+    var E = Editor.estado;
+
+    /**
+     * Foto de um produto pela chave (campo "foto", ou "tipo" na cópia de chaves).
+     * @param {string} fotoKey chave da foto
+     * @param {object} cat     categoria do produto
+     * @returns {string|null}  data URL ou null
+     */
+    function findPhotoSrc(fotoKey, cat) {
+        if (!fotoKey || E.imagensOcultas[fotoKey]) return null;
+
+        // Só procura nos mapas DA PRÓPRIA categoria (ver MAPAS_POR_CATEGORIA)
+        var mapNames = cat && Editor.MAPAS_POR_CATEGORIA[cat.id] ? Editor.MAPAS_POR_CATEGORIA[cat.id] : [];
+        for (var i = 0; i < mapNames.length; i++) {
+            var map = E.allImageMaps[mapNames[i]];
+            if (map && map[fotoKey]) {
+                // A foto trocada no editor substitui a original desta categoria
+                if (E.imagensCustom[fotoKey]) return E.imagensCustom[fotoKey];
+                return map[fotoKey];
+            }
+        }
+
+        // Não há foto original nesta categoria. Uma IMAGENS_CUSTOM com a mesma
+        // chave só vale se NÃO for cópia de uma foto de outra categoria. Isso
+        // corrige um caso antigo: cadeado com foto "yale" recebendo, por engano,
+        // a foto da chave Yale salva em IMAGENS_CUSTOM["yale"].
+        if (E.imagensCustom[fotoKey]) {
+            var customSrc = E.imagensCustom[fotoKey];
+            for (var mapName in E.allImageMaps) {
+                if (mapNames.indexOf(mapName) !== -1 || mapName === 'IMAGENS_CUSTOM' || mapName === 'IMAGENS_OCULTAS') continue;
+                var outro = E.allImageMaps[mapName];
+                if (outro && outro[fotoKey] && outro[fotoKey] === customSrc) return null;
+            }
+            return customSrc;
+        }
+        return null;
+    }
+
+    /**
+     * Foto compartilhada de um grupo (fechaduras, ou produtos em "Uma foto para o grupo").
+     * A foto adicionada no editor vence a original de IMAGENS_FECHADURA.
+     * @param {string} grupoNome
+     * @returns {string|null}
+     */
+    function findGroupPhotoSrc(grupoNome) {
+        if (!grupoNome || E.imagensOcultas['group:' + grupoNome]) return null;
+        if (E.imagensCustom[grupoNome]) return E.imagensCustom[grupoNome];
+        var map = E.allImageMaps.IMAGENS_FECHADURA;
+        return map && map[grupoNome] ? map[grupoNome] : null;
+    }
+
+    /**
+     * Foto que um produto comum mostra, considerando o modo de foto.
+     * @param {object} cat
+     * @param {object} prod
+     * @returns {string|null}
+     */
+    function findProductPhotoSrc(cat, prod) {
+        if (!prod || prod.semFoto) return null;
+        if (prod.fotoModo === 'grupo' && prod.grupo) return findGroupPhotoSrc(prod.grupo);
+        if (prod.foto) return findPhotoSrc(prod.foto, cat);
+        // Cópia de chaves usa o "tipo" como chave do mapa IMAGENS_CHAVE
+        if (cat && cat.id === 'copia-chaves' && prod.tipo) return findPhotoSrc(prod.tipo, cat);
+        return null;
+    }
+
+    Editor.fotos = {
+        findPhotoSrc: findPhotoSrc,
+        findGroupPhotoSrc: findGroupPhotoSrc,
+        findProductPhotoSrc: findProductPhotoSrc
+    };
+})(window);
+</script>
+<script>
+/* ----- editor/js/carregar.js ----- */
+/**
+ * =====================================================================
+ * CARREGAR.JS - ABRE O ARQUIVO DO CATÁLOGO E LÊ OS DADOS
+ * =====================================================================
+ *
+ * O catálogo é um .html com os dados dentro do <script>. Daqui saem:
+ *   CATEGORIAS        -> estado.categorias (obrigatório)
+ *   IMAGENS_XXX       -> estado.allImageMaps (pré-visualização das fotos)
+ *   IMAGENS_CUSTOM    -> estado.imagensCustom
+ *   IMAGENS_OCULTAS   -> estado.imagensOcultas
+ *   TAMANHOS_CUSTOM   -> estado.tamanhosCustom
+ * =====================================================================
+ */
+(function (raiz) {
+    'use strict';
+
+    var Editor = raiz.Editor;
+    var E = Editor.estado;
+    var D = raiz.Declaracoes;
+
+    /**
+     * Lê o texto de um catálogo e prepara o editor.
+     * @param {string} texto conteúdo do arquivo .html
+     * @throws {Error} se o arquivo não tiver "const CATEGORIAS = [...]"
+     */
+    function loadCatalog(texto) {
+        var dom = Editor.dom;
+        E.rawHtml = texto;
+        dom.parseWarning.classList.remove('show');
+        dom.parseWarning.textContent = '';
+
+        var catDecl = D.extrair(texto, 'CATEGORIAS');
+        if (!catDecl) {
+            throw new Error("Não encontrei 'const CATEGORIAS = [...]' no arquivo. Confirme que é o arquivo certo do catálogo.");
+        }
+        E.categorias = D.avaliar(catDecl.conteudo);
+
+        // Todos os mapas de fotos, só para mostrar as fotos no editor
+        E.allImageMaps = {};
+        D.nomesDosMapasDeImagens(texto).forEach(function (nome) {
+            var mapa = D.ler(texto, nome); // mapas que não puderem ser lidos são ignorados
+            if (mapa) E.allImageMaps[nome] = mapa;
+        });
+        E.imagensCustom = E.allImageMaps.IMAGENS_CUSTOM || {};
+        E.imagensOcultas = D.ler(texto, 'IMAGENS_OCULTAS') || {};
+        E.tamanhosCustom = D.ler(texto, 'TAMANHOS_CUSTOM') || {};
+
+        // Catálogos antigos não têm o código que entende fotos do editor.
+        // Não é erro: a exportação acrescenta esse código automaticamente.
+        var temSuporteAFotos = texto.indexOf('IMAGENS_CUSTOM') !== -1 && texto.indexOf('IMAGENS_CUSTOM[p.foto]') !== -1;
+        if (!temSuporteAFotos) {
+            dom.parseWarning.textContent = 'Este arquivo é de uma versão mais antiga do catálogo (sem o suporte genérico a fotos). ' +
+                'Não tem problema: ao baixar, esta ferramenta já inclui automaticamente o que falta para tudo funcionar.';
+            dom.parseWarning.classList.add('show');
+        }
+
+        Editor.categoriasUI.renderCategories();
+        dom.emptyState.hidden = true;
+        dom.editorRoot.hidden = false;
+        dom.saveBtn.disabled = false;
+    }
+
+    /**
+     * Trata o arquivo escolhido no botão "Carregar catálogo".
+     * @param {Event} e evento change do <input type=file>
+     */
+    function handleFileSelect(e) {
+        var arquivo = e.target.files[0];
+        if (!arquivo) return;
+        var leitor = new FileReader();
+        leitor.onload = function (evt) {
+            try {
+                loadCatalog(evt.target.result);
+            } catch (err) {
+                alert('Não consegui ler esse arquivo como catálogo válido.\n\nDetalhe técnico: ' + err.message);
+                console.error(err);
+            }
+        };
+        leitor.readAsText(arquivo, 'utf-8');
+        e.target.value = ''; // permite escolher o mesmo arquivo de novo
+    }
+
+    Editor.carregar = { loadCatalog: loadCatalog, handleFileSelect: handleFileSelect };
+})(window);
+</script>
+<script>
+/* ----- editor/js/render-produtos.js ----- */
+/**
+ * =====================================================================
+ * RENDER-PRODUTOS.JS - CARTÃO DE UM PRODUTO COMUM
+ * =====================================================================
+ *
+ * Usado em todas as categorias, exceto "fechaduras" (essa tem o seu
+ * próprio layout por grupo, em render-fechaduras.js).
+ *
+ * O cartão tem:
+ *   [caixa de foto] [nome, grupo, preço, condição, modo de foto, descrição] [Excluir]
+ *
+ * Modos de foto:
+ *   - Individual: a foto é só deste produto. Fica em IMAGENS_CUSTOM com
+ *     uma chave única, gravada no campo "foto" do produto.
+ *   - Uma foto para o grupo: todos os produtos do mesmo "grupo" mostram a
+ *     mesma foto, guardada em IMAGENS_CUSTOM com o NOME do grupo como chave.
+ *
+ * Correção (out/2026): a versão anterior usava "fields" e "fieldBlock"
+ * sem criá-los nesta função, e o editor quebrava ao abrir qualquer
+ * catálogo ("fields is not defined"). Agora os campos são criados aqui.
+ * =====================================================================
+ */
+(function (raiz) {
+    'use strict';
+
+    var Editor = raiz.Editor;
+    var E = Editor.estado;
+    var U = Editor.util;
+
+    /**
+     * Desenha o cartão de um produto.
+     * @param {object} cat     categoria do produto
+     * @param {object} prod    produto (alterado diretamente pelos campos)
+     * @param {number} prodIdx posição do produto em cat.produtos
+     * @returns {HTMLDivElement}
+     */
+    function renderProductCard(cat, prod, prodIdx) {
+        var card = document.createElement('div');
+        card.className = 'product-card';
+
+        /* ---------- Caixa de foto ---------- */
+        var photoBox = document.createElement('div');
+        photoBox.className = 'photo-box';
+        var photoInput = U.seletorDeFoto();
+
+        /** Redesenha a caixa: a foto atual com "×" para remover, ou o convite para adicionar. */
+        function paintPhotoBox() {
+            while (photoBox.firstChild) photoBox.removeChild(photoBox.firstChild);
+            var isGroup = prod.fotoModo === 'grupo';
+            var src = Editor.fotos.findProductPhotoSrc(cat, prod);
+            if (src) {
+                var img = document.createElement('img');
+                img.src = src;
+                img.alt = prod.nome || 'Produto';
+                photoBox.appendChild(img);
+                photoBox.appendChild(U.botaoRemoverFoto(isGroup ? 'Remover foto do grupo' : 'Remover foto individual', function () {
+                    if (isGroup && prod.grupo) {
+                        delete E.imagensCustom[prod.grupo];
+                        E.imagensOcultas['group:' + prod.grupo] = true;
+                    } else if (prod.foto) {
+                        delete E.imagensCustom[prod.foto];
+                        E.imagensOcultas[prod.foto] = true;
+                        delete prod.foto;
+                    }
+                    prod.semFoto = true; // o catálogo mostra o ícone da categoria
+                    paintPhotoBox();
+                }));
+            } else {
+                var lbl = document.createElement('div');
+                lbl.className = 'ph-label';
+                lbl.textContent = isGroup ? 'Adicionar foto do grupo' : 'Adicionar foto individual';
+                photoBox.appendChild(lbl);
+            }
+            photoBox.appendChild(photoInput);
+        }
+
+        photoBox.addEventListener('click', function (ev) {
+            if (ev.target.closest('.remove-photo')) return;
+            photoInput.click();
+        });
+
+        photoInput.addEventListener('change', function (e) {
+            var file = e.target.files && e.target.files[0];
+            if (!file) return;
+            U.lerFoto(file, function (dataUrl) {
+                if (prod.fotoModo === 'grupo') {
+                    if (!prod.grupo) prod.grupo = prompt('Nome do grupo para compartilhar a foto:', '') || '';
+                    if (!prod.grupo) return;
+                    // Foto de grupo usa o próprio nome do grupo como chave
+                    E.imagensCustom[prod.grupo] = dataUrl;
+                    delete E.imagensOcultas['group:' + prod.grupo];
+                    // Produto em modo grupo não guarda foto individual
+                    if (prod.foto) {
+                        delete E.imagensCustom[prod.foto];
+                        delete prod.foto;
+                    }
+                } else {
+                    var key = prod.foto || U.uniqueFotoKey();
+                    E.imagensCustom[key] = dataUrl;
+                    delete E.imagensOcultas[key];
+                    prod.foto = key;
+                }
+                delete prod.semFoto;
+                paintPhotoBox();
+            });
+            photoInput.value = ''; // permite escolher a mesma imagem de novo
+        });
+        paintPhotoBox();
+        card.appendChild(photoBox);
+
+        /* ---------- Campos ---------- */
+        var fields = document.createElement('div');
+        fields.className = 'product-fields';
+        fields.appendChild(U.campoDoProduto(prod, 'Nome', 'nome', true, false));
+        if (prod.grupo !== undefined) fields.appendChild(U.campoDoProduto(prod, 'Grupo', 'grupo', true, false));
+        fields.appendChild(U.campoDoProduto(prod, 'Preço', 'preco', false, false));
+        fields.appendChild(U.campoDoProduto(prod, 'Condição (opcional)', 'condicao', false, false));
+        fields.appendChild(seletorDeModo(cat, prod));
+        fields.appendChild(U.campoDoProduto(prod, 'Descrição (opcional)', 'desc', true, true));
+        card.appendChild(fields);
+
+        /* ---------- Ações ---------- */
+        var actions = document.createElement('div');
+        actions.className = 'product-actions';
+        var delBtn = document.createElement('button');
+        delBtn.className = 'btn-danger btn-sm';
+        delBtn.textContent = 'Excluir';
+        delBtn.addEventListener('click', function () {
+            cat.produtos.splice(prodIdx, 1);
+            Editor.categoriasUI.rerenderCategory(E.categorias.indexOf(cat));
+        });
+        actions.appendChild(delBtn);
+        card.appendChild(actions);
+        return card;
+    }
+
+    /**
+     * Select "Foto: Individual / Uma foto para o grupo".
+     * Ao passar para "grupo" sem grupo definido, pergunta o nome do grupo.
+     */
+    function seletorDeModo(cat, prod) {
+        var wrap = document.createElement('div');
+        var label = document.createElement('label');
+        label.textContent = 'Foto';
+        wrap.appendChild(label);
+
+        var select = document.createElement('select');
+        select.className = 'campo-select';
+        select.innerHTML = '<option value="individual">Individual</option><option value="grupo">Uma foto para o grupo</option>';
+        select.value = prod.fotoModo === 'grupo' ? 'grupo' : 'individual';
+        select.addEventListener('change', function (e) {
+            prod.fotoModo = e.target.value;
+            if (prod.fotoModo === 'grupo' && !prod.grupo) {
+                prod.grupo = prompt('Nome do grupo para compartilhar a foto:', '') || '';
+            }
+            if (prod.fotoModo === 'individual') delete prod.fotoModo; // individual é o padrão: não grava
+            Editor.categoriasUI.rerenderCategory(E.categorias.indexOf(cat));
+        });
+        wrap.appendChild(select);
+        return wrap;
+    }
+
+    Editor.produtosUI = { renderProductCard: renderProductCard };
+})(window);
+</script>
+<script>
+/* ----- editor/js/render-fechaduras.js ----- */
+/**
+ * =====================================================================
+ * RENDER-FECHADURAS.JS - GRUPOS DE FECHADURA E SEUS ITENS
+ * =====================================================================
+ *
+ * Na categoria "fechaduras", produtos seguidos com o mesmo "grupo"
+ * formam um modelo (ex.: "Fechadura Gorge") com:
+ *   - UMA foto compartilhada pelo grupo (IMAGENS_CUSTOM[nome do grupo]
+ *     ou a original em IMAGENS_FECHADURA);
+ *   - tamanho da foto no catálogo (Padrão/Pequena/Média/Grande),
+ *     guardado em TAMANHOS_CUSTOM[nome do grupo];
+ *   - os itens em linhas compactas (nome, preço, condição, descrição).
+ *     Cada item pode usar a foto do grupo ou ter uma foto individual.
+ *
+ * Renomear o grupo leva junto a foto, a marcação de foto removida e o
+ * tamanho escolhido.
+ * =====================================================================
+ */
+(function (raiz) {
+    'use strict';
+
+    var Editor = raiz.Editor;
+    var E = Editor.estado;
+    var U = Editor.util;
+
+    /**
+     * Desenha um grupo de fechadura.
+     * @param {object} cat    categoria "fechaduras"
+     * @param {{nome:string, itens:{prod:object, prodIdx:number}[]}} grupo
+     * @param {number} catIdx posição da categoria
+     * @returns {HTMLDivElement}
+     */
+    function renderLockGroupCard(cat, grupo, catIdx) {
+        var card = document.createElement('div');
+        card.className = 'lock-group-card';
+        var nomeAtual = grupo.nome || '';
+
+        var header = document.createElement('div');
+        header.className = 'lock-group-header';
+
+        /* ---------- Foto do grupo ---------- */
+        var photoColumn = document.createElement('div');
+        photoColumn.className = 'coluna-foto';
+        var photoBox = document.createElement('div');
+        photoBox.className = 'photo-box lock-group-photo-box';
+        var chooseBtn = document.createElement('button');
+        chooseBtn.type = 'button';
+        chooseBtn.className = 'btn-ghost btn-sm';
+        chooseBtn.textContent = 'Escolher foto';
+        var photoInput = U.seletorDeFoto();
+
+        /** Redesenha a foto do grupo (ou o aviso "Foto do grupo"). */
+        function paintPhotoBox() {
+            photoBox.innerHTML = '';
+            var src = Editor.fotos.findGroupPhotoSrc(nomeAtual);
+            if (src) {
+                var img = document.createElement('img');
+                img.src = src;
+                img.alt = nomeAtual || 'Grupo';
+                photoBox.appendChild(img);
+                photoBox.appendChild(U.botaoRemoverFoto('Remover foto do grupo', function () {
+                    if (nomeAtual) {
+                        delete E.imagensCustom[nomeAtual];
+                        E.imagensOcultas['group:' + nomeAtual] = true;
+                    }
+                    paintPhotoBox();
+                }));
+            } else {
+                var lbl = document.createElement('div');
+                lbl.className = 'ph-label';
+                lbl.textContent = 'Foto do grupo';
+                photoBox.appendChild(lbl);
+            }
+        }
+
+        chooseBtn.addEventListener('click', function () {
+            if (!nomeAtual.trim()) { alert('Primeiro informe o nome do grupo.'); return; }
+            photoInput.click();
+        });
+        photoInput.addEventListener('change', function (e) {
+            var file = e.target.files && e.target.files[0];
+            if (!file || !nomeAtual.trim()) return;
+            U.lerFoto(file, function (dataUrl) {
+                E.imagensCustom[nomeAtual] = dataUrl;
+                delete E.imagensOcultas['group:' + nomeAtual];
+                paintPhotoBox();
+            });
+            photoInput.value = '';
+        });
+        paintPhotoBox();
+        photoColumn.appendChild(photoBox);
+        photoColumn.appendChild(chooseBtn);
+        photoColumn.appendChild(photoInput);
+        header.appendChild(photoColumn);
+
+        /* ---------- Nome e tamanho da foto ---------- */
+        var headerFields = document.createElement('div');
+        headerFields.className = 'lock-group-header-fields';
+        headerFields.innerHTML =
+            '<label>Nome do grupo</label>' +
+            '<input type="text" data-field="grupo-nome" value="' + U.escapeAttr(nomeAtual) + '">' +
+            '<label>Tamanho da foto no catálogo</label>' +
+            '<select data-field="grupo-tamanho">' +
+            Editor.TAMANHOS_GRUPO.map(function (t) { return '<option value="' + t.valor + '">' + t.label + '</option>'; }).join('') +
+            '</select>';
+        var nomeInput = headerFields.querySelector('[data-field="grupo-nome"]');
+        var tamanhoSelect = headerFields.querySelector('[data-field="grupo-tamanho"]');
+        tamanhoSelect.value = E.tamanhosCustom[nomeAtual] ? String(E.tamanhosCustom[nomeAtual]) : '';
+
+        nomeInput.addEventListener('change', function (e) {
+            var novoNome = e.target.value.trim();
+            if (!novoNome) { e.target.value = nomeAtual; return; } // nome vazio não vale
+            if (nomeAtual !== novoNome) {
+                // Leva a foto, a marcação de "removida" e o tamanho para o novo nome
+                if (E.imagensCustom[nomeAtual]) E.imagensCustom[novoNome] = E.imagensCustom[nomeAtual];
+                if (E.imagensOcultas['group:' + nomeAtual]) E.imagensOcultas['group:' + novoNome] = E.imagensOcultas['group:' + nomeAtual];
+                if (E.tamanhosCustom[nomeAtual] !== undefined) E.tamanhosCustom[novoNome] = E.tamanhosCustom[nomeAtual];
+                delete E.imagensCustom[nomeAtual];
+                delete E.imagensOcultas['group:' + nomeAtual];
+                delete E.tamanhosCustom[nomeAtual];
+            }
+            grupo.itens.forEach(function (it) { it.prod.grupo = novoNome; });
+            nomeAtual = novoNome;
+            paintPhotoBox();
+            tamanhoSelect.value = E.tamanhosCustom[nomeAtual] ? String(E.tamanhosCustom[nomeAtual]) : '';
+        });
+        tamanhoSelect.addEventListener('change', function (e) {
+            if (e.target.value) E.tamanhosCustom[nomeAtual] = Number(e.target.value);
+            else delete E.tamanhosCustom[nomeAtual];
+        });
+        header.appendChild(headerFields);
+
+        /* ---------- Excluir grupo ---------- */
+        var headerActions = document.createElement('div');
+        headerActions.className = 'lock-group-header-actions';
+        var delGroupBtn = document.createElement('button');
+        delGroupBtn.className = 'btn-danger btn-sm';
+        delGroupBtn.textContent = 'Excluir grupo';
+        delGroupBtn.addEventListener('click', function () {
+            if (!confirm('Excluir o grupo "' + nomeAtual + '" e todos os seus ' + grupo.itens.length + ' item(ns)?')) return;
+            // remove do fim para o começo, para os índices não mudarem no meio
+            grupo.itens.map(function (it) { return it.prodIdx; })
+                .sort(function (a, b) { return b - a; })
+                .forEach(function (idx) { cat.produtos.splice(idx, 1); });
+            delete E.imagensCustom[nomeAtual];
+            delete E.imagensOcultas['group:' + nomeAtual];
+            delete E.tamanhosCustom[nomeAtual];
+            Editor.categoriasUI.rerenderCategory(catIdx);
+        });
+        headerActions.appendChild(delGroupBtn);
+        header.appendChild(headerActions);
+        card.appendChild(header);
+
+        /* ---------- Itens ---------- */
+        var itemsWrap = document.createElement('div');
+        itemsWrap.className = 'lock-group-items-list';
+        grupo.itens.forEach(function (it) {
+            itemsWrap.appendChild(renderLockItemRow(cat, it.prod, it.prodIdx, catIdx));
+        });
+        card.appendChild(itemsWrap);
+
+        var addItemBtn = document.createElement('button');
+        addItemBtn.className = 'add-product-btn btn-sm';
+        addItemBtn.textContent = '+ Adicionar item a este grupo';
+        addItemBtn.addEventListener('click', function () {
+            // o item novo entra logo depois do último item do grupo
+            var lastIdx = grupo.itens.length ? grupo.itens[grupo.itens.length - 1].prodIdx : cat.produtos.length - 1;
+            cat.produtos.splice(lastIdx + 1, 0, { nome: 'Novo item', preco: 'R$ 0,00', grupo: nomeAtual, fotoModo: 'grupo' });
+            Editor.categoriasUI.rerenderCategory(catIdx);
+        });
+        card.appendChild(addItemBtn);
+        return card;
+    }
+
+    /**
+     * Linha de um item dentro de um grupo de fechadura.
+     * O item pode usar a foto do grupo OU uma foto própria (individual).
+     * @returns {HTMLDivElement}
+     */
+    function renderLockItemRow(cat, prod, prodIdx, catIdx) {
+        var row = document.createElement('div');
+        row.className = 'lock-item-row';
+
+        /* ---------- Modo de foto ---------- */
+        var modeWrap = document.createElement('div');
+        modeWrap.className = 'coluna-modo';
+        var modeLabel = document.createElement('label');
+        modeLabel.className = 'rotulo-campo';
+        modeLabel.textContent = 'Foto do item';
+        modeWrap.appendChild(modeLabel);
+        var modeSelect = document.createElement('select');
+        modeSelect.className = 'campo-select';
+        modeSelect.innerHTML = '<option value="grupo">Foto do grupo</option><option value="individual">Foto individual</option>';
+        modeSelect.value = prod.fotoModo === 'individual' ? 'individual' : 'grupo';
+        modeWrap.appendChild(modeSelect);
+        row.appendChild(modeWrap);
+
+        /* ---------- Foto individual ---------- */
+        var photoColumn = document.createElement('div');
+        photoColumn.className = 'coluna-foto';
+        var photoBox = document.createElement('div');
+        photoBox.className = 'photo-box lock-item-photo-box';
+        var chooseBtn = document.createElement('button');
+        chooseBtn.type = 'button';
+        chooseBtn.className = 'btn-ghost btn-sm';
+        chooseBtn.textContent = 'Escolher foto';
+        var photoInput = U.seletorDeFoto();
+
+        /** Mostra a foto individual, ou "Usando foto do grupo" / "Sem foto individual". */
+        function paintPhotoBox() {
+            photoBox.innerHTML = '';
+            var individual = prod.fotoModo === 'individual';
+            var src = individual ? Editor.fotos.findPhotoSrc(prod.foto, cat) : null;
+            if (src) {
+                var img = document.createElement('img');
+                img.src = src;
+                img.alt = prod.nome || 'Produto';
+                photoBox.appendChild(img);
+                photoBox.appendChild(U.botaoRemoverFoto('Remover foto individual', function () {
+                    if (prod.foto) {
+                        delete E.imagensCustom[prod.foto];
+                        E.imagensOcultas[prod.foto] = true;
+                        delete prod.foto;
+                    }
+                    paintPhotoBox();
+                }));
+            } else {
+                var lbl = document.createElement('div');
+                lbl.className = 'ph-label';
+                lbl.textContent = individual ? 'Sem foto individual' : 'Usando foto do grupo';
+                photoBox.appendChild(lbl);
+            }
+        }
+
+        chooseBtn.addEventListener('click', function () {
+            // escolher foto já coloca o item em "Foto individual"
+            if (prod.fotoModo !== 'individual') {
+                modeSelect.value = 'individual';
+                prod.fotoModo = 'individual';
+                paintPhotoBox();
+            }
+            photoInput.click();
+        });
+        photoInput.addEventListener('change', function (e) {
+            var file = e.target.files && e.target.files[0];
+            if (!file) return;
+            U.lerFoto(file, function (dataUrl) {
+                var key = prod.foto || U.uniqueFotoKey();
+                E.imagensCustom[key] = dataUrl;
+                delete E.imagensOcultas[key];
+                prod.foto = key;
+                prod.fotoModo = 'individual';
+                delete prod.semFoto;
+                modeSelect.value = 'individual';
+                paintPhotoBox();
+            });
+            photoInput.value = '';
+        });
+        modeSelect.addEventListener('change', function (e) {
+            prod.fotoModo = e.target.value;
+            if (prod.fotoModo === 'grupo') delete prod.semFoto;
+            paintPhotoBox();
+        });
+        paintPhotoBox();
+        photoColumn.appendChild(photoBox);
+        photoColumn.appendChild(chooseBtn);
+        photoColumn.appendChild(photoInput);
+        row.appendChild(photoColumn);
+
+        /* ---------- Campos ---------- */
+        var fields = document.createElement('div');
+        fields.className = 'product-fields lock-item-fields';
+        fields.appendChild(U.campoDoProduto(prod, 'Nome', 'nome', true, false));
+        fields.appendChild(U.campoDoProduto(prod, 'Preço', 'preco', false, false));
+        fields.appendChild(U.campoDoProduto(prod, 'Condição (opcional)', 'condicao', false, false));
+        fields.appendChild(U.campoDoProduto(prod, 'Descrição (opcional)', 'desc', true, true));
+        row.appendChild(fields);
+
+        /* ---------- Excluir item ---------- */
+        var delBtn = document.createElement('button');
+        delBtn.className = 'btn-danger btn-sm lock-item-del';
+        delBtn.textContent = 'Excluir';
+        delBtn.addEventListener('click', function () {
+            cat.produtos.splice(prodIdx, 1);
+            Editor.categoriasUI.rerenderCategory(catIdx);
+        });
+        row.appendChild(delBtn);
+        return row;
+    }
+
+    Editor.fechadurasUI = { renderLockGroupCard: renderLockGroupCard, renderLockItemRow: renderLockItemRow };
+})(window);
+</script>
+<script>
+/* ----- editor/js/render-categorias.js ----- */
+/**
+ * =====================================================================
+ * RENDER-CATEGORIAS.JS - LISTA DE CATEGORIAS DO EDITOR
+ * =====================================================================
+ *
+ * Cada categoria é um cartão que abre/fecha ao clicar no cabeçalho:
+ *   cabeçalho: ícone, nome, quantidade de produtos, setas ▲▼ (mudar a
+ *              ordem no catálogo) e a seta de abrir;
+ *   corpo:     campos da categoria (ícone, nome, descrição, id), os
+ *              produtos (ou grupos, em "fechaduras") e "Excluir categoria".
+ *
+ * A ordem das categorias aqui é a ordem das páginas no catálogo.
+ * =====================================================================
+ */
+(function (raiz) {
+    'use strict';
+
+    var Editor = raiz.Editor;
+    var E = Editor.estado;
+    var U = Editor.util;
+
+    /** Redesenha a lista inteira de categorias. */
+    function renderCategories() {
+        var lista = Editor.dom.catList;
+        lista.innerHTML = '';
+        E.categorias.forEach(function (cat, catIdx) {
+            lista.appendChild(renderCategoryCard(cat, catIdx));
+        });
+    }
+
+    /**
+     * Redesenha tudo mantendo aberta a categoria que estava aberta.
+     * Usado depois de incluir/excluir produtos.
+     */
+    function rerenderCategory(catIdx) {
+        var lista = Editor.dom.catList;
+        var estavaAberta = lista.children[catIdx] && lista.children[catIdx].classList.contains('open');
+        renderCategories();
+        if (estavaAberta && lista.children[catIdx]) lista.children[catIdx].classList.add('open');
+    }
+
+    /** Troca a categoria de lugar com a vizinha (delta -1 = sobe, +1 = desce). */
+    function moveCategory(catIdx, delta) {
+        var destino = catIdx + delta;
+        if (destino < 0 || destino >= E.categorias.length) return;
+        var lista = Editor.dom.catList;
+        var estavaAberta = lista.children[catIdx] && lista.children[catIdx].classList.contains('open');
+        var tmp = E.categorias[catIdx];
+        E.categorias[catIdx] = E.categorias[destino];
+        E.categorias[destino] = tmp;
+        renderCategories();
+        if (estavaAberta && lista.children[destino]) lista.children[destino].classList.add('open');
+    }
+
+    /**
+     * Desenha o cartão de uma categoria.
+     * @param {object} cat
+     * @param {number} catIdx
+     * @returns {HTMLDivElement}
+     */
+    function renderCategoryCard(cat, catIdx) {
+        var card = document.createElement('div');
+        card.className = 'cat-card';
+        var fechaduras = cat.id === 'fechaduras';
+        if (!cat.produtos) cat.produtos = [];
+
+        /* ---------- Cabeçalho ---------- */
+        var head = document.createElement('div');
+        head.className = 'cat-head';
+        head.innerHTML =
+            '<div class="cat-icon-badge">' + U.escapeHtml(cat.icone || '📦') + '</div>' +
+            '<div class="cat-head-info">' +
+            '  <div class="name">' + U.escapeHtml(cat.nome || '(sem nome)') + '</div>' +
+            '  <div class="meta">' + cat.produtos.length + ' produto(s) · id: ' + U.escapeHtml(cat.id || '') + '</div>' +
+            '</div>' +
+            '<div class="cat-move">' +
+            '  <button class="cat-move-btn" data-move="up" title="Mover categoria para cima"' + (catIdx === 0 ? ' disabled' : '') + '>▲</button>' +
+            '  <button class="cat-move-btn" data-move="down" title="Mover categoria para baixo"' + (catIdx === E.categorias.length - 1 ? ' disabled' : '') + '>▼</button>' +
+            '</div>' +
+            '<div class="chev">▶</div>';
+        head.querySelector('[data-move="up"]').addEventListener('click', function (e) { e.stopPropagation(); moveCategory(catIdx, -1); });
+        head.querySelector('[data-move="down"]').addEventListener('click', function (e) { e.stopPropagation(); moveCategory(catIdx, 1); });
+        head.addEventListener('click', function () { card.classList.toggle('open'); });
+        card.appendChild(head);
+
+        /** Atualiza o cabeçalho enquanto o usuário digita nos campos. */
+        function syncHead() {
+            head.querySelector('.cat-icon-badge').textContent = cat.icone || '📦';
+            head.querySelector('.name').textContent = cat.nome || '(sem nome)';
+            head.querySelector('.meta').textContent = cat.produtos.length + ' produto(s) · id: ' + (cat.id || '');
+        }
+
+        var body = document.createElement('div');
+        body.className = 'cat-body';
+
+        /* ---------- Campos da categoria ---------- */
+        var fg = document.createElement('div');
+        fg.className = 'field-grid';
+        fg.innerHTML =
+            '<label>Ícone</label><input type="text" data-field="icone" value="' + U.escapeAttr(cat.icone || '') + '" maxlength="4">' +
+            '<label>Nome</label><input type="text" data-field="nome" value="' + U.escapeAttr(cat.nome || '') + '">' +
+            '<label>Descrição</label><textarea data-field="descricao" rows="2">' + U.escapeHtml(cat.descricao || '') + '</textarea>' +
+            '<label>ID interno</label><input type="text" data-field="id" value="' + U.escapeAttr(cat.id || '') + '">';
+        ['icone', 'nome', 'descricao', 'id'].forEach(function (campo) {
+            fg.querySelector('[data-field="' + campo + '"]').addEventListener('input', function (e) {
+                cat[campo] = e.target.value;
+                if (campo !== 'descricao') syncHead();
+            });
+        });
+        body.appendChild(fg);
+
+        var idHint = document.createElement('div');
+        idHint.className = 'id-hint';
+        idHint.textContent = 'O ID é usado internamente para organizar fotos e não precisa ser mexido, a menos que você saiba o que está fazendo.';
+        body.appendChild(idHint);
+
+        if (fechaduras) {
+            body.appendChild(nota('Você pode usar uma foto única para todo o grupo ou escolher foto individual em cada produto. Assim, fechaduras podem compartilhar uma imagem ou ter uma imagem própria por item.'));
+        }
+
+        /* ---------- Produtos ---------- */
+        var pTitle = document.createElement('div');
+        pTitle.className = 'products-title';
+        pTitle.innerHTML = '<h3>' + (fechaduras ? 'Grupos de fechadura' : 'Produtos') + '</h3>';
+        body.appendChild(pTitle);
+
+        if (fechaduras) {
+            U.agruparConsecutivos(cat.produtos).forEach(function (grupo) {
+                body.appendChild(Editor.fechadurasUI.renderLockGroupCard(cat, grupo, catIdx));
+            });
+            body.appendChild(botaoAdicionar('+ Adicionar novo grupo', '', function () {
+                cat.produtos.push({ nome: 'Novo item', preco: 'R$ 0,00', grupo: 'Novo grupo' });
+                rerenderCategory(catIdx);
+            }));
+        } else {
+            body.appendChild(nota('Foto: use “Individual” para uma imagem exclusiva do produto ou “Uma foto para o grupo” para compartilhar a mesma imagem entre vários produtos.'));
+            cat.produtos.forEach(function (prod, prodIdx) {
+                body.appendChild(Editor.produtosUI.renderProductCard(cat, prod, prodIdx));
+            });
+
+            // Produto sem foto própria: entra no último grupo usado e usa a foto do grupo
+            body.appendChild(botaoAdicionar('+ Adicionar produto sem foto / do grupo',
+                'Cria um produto que não terá foto própria. Se houver um grupo, ele usará a foto compartilhada do grupo.', function () {
+                    var grupos = cat.produtos.map(function (p) { return p.grupo; })
+                        .filter(function (g) { return g !== undefined && String(g).trim() !== ''; });
+                    var novo = { nome: 'Novo produto', preco: 'R$ 0,00', fotoModo: 'grupo' };
+                    if (grupos.length) novo.grupo = grupos[grupos.length - 1];
+                    cat.produtos.push(novo);
+                    rerenderCategory(catIdx);
+                }));
+
+            body.appendChild(botaoAdicionar('+ Adicionar produto com foto individual', 'Cria um produto separado, com foto própria.', function () {
+                cat.produtos.push({ nome: 'Novo produto', preco: 'R$ 0,00', fotoModo: 'individual' });
+                rerenderCategory(catIdx);
+            }));
+        }
+
+        /* ---------- Excluir categoria ---------- */
+        var footerActions = document.createElement('div');
+        footerActions.className = 'cat-footer-actions';
+        var delCatBtn = document.createElement('button');
+        delCatBtn.className = 'btn-danger btn-sm';
+        delCatBtn.textContent = 'Excluir categoria';
+        delCatBtn.addEventListener('click', function () {
+            if (confirm('Excluir a categoria "' + cat.nome + '" e todos os seus produtos?')) {
+                E.categorias.splice(catIdx, 1);
+                renderCategories();
+            }
+        });
+        footerActions.appendChild(delCatBtn);
+        body.appendChild(footerActions);
+
+        card.appendChild(body);
+        return card;
+    }
+
+    /** Texto de ajuda pequeno. */
+    function nota(texto) {
+        var el = document.createElement('div');
+        el.className = 'lock-note';
+        el.textContent = texto;
+        return el;
+    }
+
+    /** Botão tracejado "+ Adicionar ...". */
+    function botaoAdicionar(texto, dica, aoClicar) {
+        var btn = document.createElement('button');
+        btn.className = 'add-product-btn';
+        btn.textContent = texto;
+        if (dica) btn.title = dica;
+        btn.addEventListener('click', aoClicar);
+        return btn;
+    }
+
+    /** Pergunta nome, emoji e descrição e cria uma categoria nova (já aberta). */
+    function addCategory() {
+        var nome = prompt('Nome da nova categoria:');
+        if (!nome) return;
+        var icone = prompt('Um emoji para representar a categoria (ex.: 🔑):', '📦') || '📦';
+        var descricao = prompt('Breve descrição da categoria:', '') || '';
+        E.categorias.push({ id: U.slugify(nome), nome: nome, icone: icone, descricao: descricao, produtos: [] });
+        renderCategories();
+        var ultimo = Editor.dom.catList.lastElementChild;
+        if (ultimo) ultimo.classList.add('open');
+    }
+
+    Editor.categoriasUI = {
+        renderCategories: renderCategories,
+        rerenderCategory: rerenderCategory,
+        moveCategory: moveCategory,
+        addCategory: addCategory
+    };
+})(window);
+</script>
+<script>
+/* ----- editor/js/exportar.js ----- */
+/**
+ * =====================================================================
+ * EXPORTAR.JS - MONTA E BAIXA O CATÁLOGO ATUALIZADO
+ * =====================================================================
+ *
+ * Parte do arquivo que foi carregado (estado.rawHtml) e troca só os
+ * blocos de dados, deixando o resto (CSS, código, fotos originais) igual:
+ *   const IMAGENS_CUSTOM  = {...}   fotos novas/trocadas
+ *   const IMAGENS_OCULTAS = {...}   fotos removidas
+ *   const TAMANHOS_CUSTOM = {...}   tamanho da foto dos grupos de fechadura
+ *   const CATEGORIAS      = [...]   categorias e produtos
+ *
+ * Catálogos antigos (anteriores ao suporte a fotos do editor) recebem
+ * antes, automaticamente, o código que faltava (ensureCustomInfra).
+ * O catálogo gerado por "npm run build" já tem tudo, e nada é injetado.
+ * =====================================================================
+ */
+(function (raiz) {
+    'use strict';
+
+    var Editor = raiz.Editor;
+    var E = Editor.estado;
+    var D = raiz.Declaracoes;
+
+    /**
+     * Acrescenta a um catálogo ANTIGO o que ele precisa para mostrar as fotos
+     * do editor. Em um catálogo que já tem esse suporte, não muda nada.
+     * @param {string} texto html do catálogo
+     * @returns {string}
+     */
+    function ensureCustomInfra(texto) {
+        var out = texto;
+
+        // 1. Declarações vazias que o editor vai preencher
+        ['IMAGENS_CUSTOM', 'IMAGENS_OCULTAS', 'TAMANHOS_CUSTOM'].forEach(function (nome) {
+            if (out.indexOf('const ' + nome) === -1) {
+                out = out.replace(/const\s+CATEGORIAS\s*=\s*\[/, 'const ' + nome + ' = {};\n\nconst CATEGORIAS = [');
+            }
+        });
+
+        // 2. Impede a foto original de aparecer quando o usuário removeu a foto
+        var guardas = [
+            ['if (cat.id === "copia-chaves" && p.tipo)', 'if (!p.fotoRemovida && cat.id === "copia-chaves" && p.tipo)'],
+            ['else if (cat.id === "chaveirinho" && p.foto && IMAGENS_CHAVEIRINHO[p.foto])', 'else if (!p.fotoRemovida && cat.id === "chaveirinho" && p.foto && IMAGENS_CHAVEIRINHO[p.foto])'],
+            ['else if (cat.id === "controle-portao" && p.foto && IMAGENS_CONTROLE[p.foto])', 'else if (!p.fotoRemovida && cat.id === "controle-portao" && p.foto && IMAGENS_CONTROLE[p.foto])'],
+            ['else if (cat.id === "bateria" && p.foto && IMAGENS_BATERIA[p.foto])', 'else if (!p.fotoRemovida && cat.id === "bateria" && p.foto && IMAGENS_BATERIA[p.foto])'],
+            ['else if (cat.id === "cadeados" && p.foto && IMAGENS_CADEADO[p.foto])', 'else if (!p.fotoRemovida && cat.id === "cadeados" && p.foto && IMAGENS_CADEADO[p.foto])'],
+            ['else if (cat.id === "miolos" && p.foto && (IMAGENS_MIOLO[p.foto] || IMAGENS_GAVETA[p.foto] || IMAGENS_MIOLO_GRANDE[p.foto] || IMAGENS_MIOLO_TETRA[p.foto]))', 'else if (!p.fotoRemovida && cat.id === "miolos" && p.foto && (IMAGENS_MIOLO[p.foto] || IMAGENS_GAVETA[p.foto] || IMAGENS_MIOLO_GRANDE[p.foto] || IMAGENS_MIOLO_TETRA[p.foto]))'],
+            ['else if (cat.id === "aberturas" && p.foto && IMAGENS_ABERTURAS[p.foto])', 'else if (!p.fotoRemovida && cat.id === "aberturas" && p.foto && IMAGENS_ABERTURAS[p.foto])'],
+            ['else if (cat.id === "chaves-codificadas" && p.foto && IMAGENS_CODIFICADAS[p.foto])', 'else if (!p.fotoRemovida && cat.id === "chaves-codificadas" && p.foto && IMAGENS_CODIFICADAS[p.foto])']
+        ];
+        guardas.forEach(function (par) {
+            if (out.indexOf(par[0]) !== -1 && out.indexOf(par[1]) === -1) out = out.replace(par[0], par[1]);
+        });
+
+        // 3. Foto do editor com prioridade sobre a original (só se ainda não existir)
+        var marcador = '/* EDITOR_CUSTOM_PHOTO_OVERRIDE_V3 */';
+        if (out.indexOf(marcador) === -1) {
+            var override = '\n        ' + marcador + '\n' +
+                '        // Fotos individuais adicionadas pelo editor têm prioridade absoluta.\n' +
+                "        if (!p.semFoto && p.fotoModo === 'grupo' && p.grupo &&\n" +
+                "            !IMAGENS_OCULTAS['group:' + p.grupo] && IMAGENS_CUSTOM[p.grupo]) {\n" +
+                '          imagemChave = `<img src="${IMAGENS_CUSTOM[p.grupo]}" style="width:100%;height:100%;object-fit:cover;object-position:center;display:block;" alt="${p.nome}" />`;\n' +
+                '        } else if (!p.semFoto && p.foto && !IMAGENS_OCULTAS[p.foto] && IMAGENS_CUSTOM[p.foto]) {\n' +
+                '          imagemChave = `<img src="${IMAGENS_CUSTOM[p.foto]}" style="width:100%;height:100%;object-fit:cover;object-position:center;display:block;" alt="${p.nome}" />`;\n' +
+                '        }\n' +
+                '        if (p.semFoto) imagemChave = null;\n';
+
+            // Ponto certo: logo antes do HTML do produto ser devolvido, para
+            // nenhum bloco de foto original sobrescrever a escolha do usuário
+            var antesDoReturn = /(\n\s*)return\s+`\s*\n\s*<div class="product">/;
+            if (antesDoReturn.test(out)) {
+                out = out.replace(antesDoReturn, function (_, quebra) {
+                    return quebra + override + quebra + 'return `\n          <div class="product">';
+                });
+            } else {
+                // Alternativa para catálogos com outra formatação
+                var inicio = /(let\s+imagemChave\s*=\s*null\s*;)/;
+                if (inicio.test(out)) out = out.replace(inicio, function (m) { return m + override; });
+            }
+        }
+
+        // 4. Foto do grupo de fechadura vinda do editor
+        if (out.indexOf('IMAGENS_CUSTOM[g.nome]') === -1) {
+            var fotoGrupo = /<div class="lock-group__photo" data-grupo="\$\{g\.nome\}">[\s\S]*?<\/div>/;
+            if (fotoGrupo.test(out)) {
+                out = out.replace(fotoGrupo, function () {
+                    return '<div class="lock-group__photo" data-grupo="${g.nome}">${(IMAGENS_FECHADURA[g.nome] || IMAGENS_CUSTOM[g.nome]) ? `<img src="${IMAGENS_FECHADURA[g.nome] || IMAGENS_CUSTOM[g.nome]}" alt="${g.nome}">` : cat.icone}</div>';
+                });
+            }
+        }
+        return out;
+    }
+
+    /**
+     * Gera o texto do catálogo atualizado (sem baixar). Separado de
+     * exportCatalog para poder ser testado.
+     * @returns {string}
+     */
+    function montarCatalogoAtualizado() {
+        var out = ensureCustomInfra(E.rawHtml);
+
+        // Marca de versão: o catálogo entende fotos individuais e de grupo
+        if (out.indexOf('CATALOGO_EDITOR_FOTOS_V2') === -1) {
+            out = out.replace('</head>', '<meta name="CATALOGO_EDITOR_FOTOS_V2" content="individual-e-grupo">\n</head>');
+        }
+
+        // Troca os blocos de dados (um de cada vez: as posições mudam a cada troca)
+        out = D.substituir(out, 'IMAGENS_CUSTOM', E.imagensCustom);
+        out = D.substituir(out, 'IMAGENS_OCULTAS', E.imagensOcultas);
+        out = D.substituir(out, 'TAMANHOS_CUSTOM', E.tamanhosCustom);
+        out = D.substituir(out, 'CATEGORIAS', E.categorias);
+        return out;
+    }
+
+    /** Baixa o catálogo atualizado como catalogo-chaveiro-senador-AAAA-MM-DD.html. */
+    function exportCatalog() {
+        if (!E.categorias) return;
+        var blob = new Blob([montarCatalogoAtualizado()], { type: 'text/html;charset=utf-8' });
+        var url = URL.createObjectURL(blob);
+        var a = document.createElement('a');
+        a.href = url;
+        a.download = 'catalogo-chaveiro-senador-' + new Date().toISOString().slice(0, 10) + '.html';
+        document.body.appendChild(a);
+        a.click();
+        document.body.removeChild(a);
+        URL.revokeObjectURL(url);
+    }
+
+    Editor.exportar = {
+        ensureCustomInfra: ensureCustomInfra,
+        montarCatalogoAtualizado: montarCatalogoAtualizado,
+        exportCatalog: exportCatalog
+    };
+})(window);
+</script>
+<script>
+/* ----- editor/js/app.js ----- */
+/**
+ * =====================================================================
+ * APP.JS - LIGA OS BOTÕES DA TELA (último arquivo carregado)
+ * =====================================================================
+ */
+(function (raiz) {
+    'use strict';
+
+    var Editor = raiz.Editor;
+    var $ = function (id) { return document.getElementById(id); };
+
+    // Elementos usados pelos outros arquivos
+    Editor.dom = {
+        fileInput: $('file-input'),
+        loadBtn: $('load-btn'),
+        saveBtn: $('save-btn'),
+        emptyState: $('empty-state'),
+        editorRoot: $('editor-root'),
+        catList: $('categories-list'),
+        parseWarning: $('parse-warning')
+    };
+
+    var dom = Editor.dom;
+    dom.loadBtn.addEventListener('click', function () { dom.fileInput.click(); });
+    dom.fileInput.addEventListener('change', Editor.carregar.handleFileSelect);
+    dom.saveBtn.addEventListener('click', Editor.exportar.exportCatalog);
+    $('add-category-btn').addEventListener('click', Editor.categoriasUI.addCategory);
+
+    // Avisa antes de fechar a aba se houver um catálogo aberto (as edições ficam só na memória)
+    raiz.addEventListener('beforeunload', function (e) {
+        if (Editor.estado.categorias) { e.preventDefault(); e.returnValue = ''; }
+    });
+})(window);
+</script>
+</body>
+</html>

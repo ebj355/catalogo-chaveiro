@@ -1,0 +1,680 @@
+/**
+ * =====================================================================
+ * CATALOGO.CSS - VISUAL DO CATÁLOGO DIGITAL (LIVRO DE PÁGINAS)
+ * =====================================================================
+ *
+ * Estilo "livro de chaveiro": páginas cinza com textura, rótulos em
+ * latão e uma página por categoria. No build, este arquivo e o
+ * ajustes-fotos.css são colados dentro do <style> do catálogo final.
+ *
+ * Índice:
+ *    1. Tokens (cores e fontes)          9. Produtos
+ *    2. Palco                           10. Grupos de fechadura
+ *    3. Livro                           11. Controles
+ *    4. Páginas                         12. Botões flutuantes
+ *    5. Tag de chave (rótulo)           13. Impressão em A4
+ *    6. Capa                            14. Painel de navegação
+ *    7. Índice                          15. Responsivo
+ *    8. Título e descrição da página    16. Estado de carregamento
+ *
+ * Fontes: Oswald (títulos), Inter (texto) e IBM Plex Mono (preços),
+ * carregadas do Google Fonts no <head> do catalogo.html.
+ * =====================================================================
+ */
+
+/* =========================================================
+   1. TOKENS: cores e fontes do catálogo
+   ========================================================= */
+:root{
+  --desk:        #101215;
+  --desk-2:      #050607;
+
+  --page-a:      #E4E6EA;
+  --page-b:      #CDD1D7;
+  --ink:         #202225;
+  --ink-dim:     #55595F;
+
+  --brass:       #8A5A16;
+  --brass-light: #C08A28;
+  --steel-blue:  #35516A;
+  --danger:      #7A2E2E;
+
+  --font-display: 'Oswald', sans-serif;
+  --font-body:    'Inter', sans-serif;
+  --font-mono:    'IBM Plex Mono', monospace;
+}
+
+*{ box-sizing:border-box; }
+html,body{ margin:0; padding:0; height:100%; }
+
+body{
+  background:
+    radial-gradient(ellipse at 50% -10%, #23262b, transparent 60%),
+    linear-gradient(180deg, var(--desk), var(--desk-2));
+  color: var(--ink);
+  font-family: var(--font-body);
+  min-height:100vh;
+  overflow-x:hidden;
+  -webkit-tap-highlight-color: transparent;
+}
+
+button{ font-family:inherit; cursor:pointer; border:none; background:none; }
+
+/* =========================================================
+   2. PALCO: fundo escuro onde o livro fica
+   ========================================================= */
+.stage{
+  min-height:100vh;
+  display:flex;
+  flex-direction:column;
+  align-items:center;
+  justify-content:center;
+  padding: 68px 16px 22px;
+  position:relative;
+}
+
+.stage__glow{
+  position:absolute;
+  top:8%; left:50%;
+  width:70vw; height:70vw;
+  max-width:520px; max-height:520px;
+  transform:translateX(-50%);
+  background: radial-gradient(circle, rgba(192,138,40,0.10), transparent 70%);
+  pointer-events:none;
+}
+
+/* =========================================================
+   3. LIVRO: tamanho e perspectiva 3D
+   ========================================================= */
+.book{
+  position:relative;
+  width: min(460px, 94vw);
+  height: min(640px, 68vh);
+  perspective: 2400px;
+  filter: drop-shadow(0 30px 40px rgba(0,0,0,0.55));
+}
+
+/* anel de chaveiro removido a pedido do cliente */
+
+/* =========================================================
+   4. PÁGINAS: folha com textura e animação de virar
+   ========================================================= */
+.page{
+  position:absolute;
+  inset:0;
+  transform-origin: left center;
+  transform-style: preserve-3d;
+  backface-visibility: hidden;
+  border-radius: 3px 12px 12px 3px;
+  overflow:hidden;
+  transition: transform .68s cubic-bezier(.45,.05,.2,1);
+  background:
+    repeating-linear-gradient(115deg, var(--page-a) 0px, var(--page-a) 3px, var(--page-b) 4px, var(--page-a) 7px);
+  box-shadow: inset 6px 0 14px rgba(0,0,0,0.12), 2px 0 10px rgba(0,0,0,0.35);
+  padding: 26px 20px 22px;
+  display:flex;
+  flex-direction:column;
+}
+
+.page.flipping{ transition: transform .68s cubic-bezier(.45,.05,.2,1); }
+
+/* sombra de dobra sutil na borda direita de cada página */
+.page::after{
+  content:"";
+  position:absolute; inset:0;
+  background: linear-gradient(90deg, transparent 88%, rgba(0,0,0,0.10) 100%);
+  pointer-events:none;
+}
+
+/* =========================================================
+   5. TAG DE CHAVE: rótulo da categoria (elemento de assinatura)
+   ========================================================= */
+.tag{
+  align-self:flex-start;
+  display:flex;
+  align-items:center;
+  gap:8px;
+  background: linear-gradient(180deg, var(--brass-light), var(--brass));
+  color:#1A1206;
+  padding: 7px 14px 7px 10px;
+  border-radius: 5px;
+  font-family: var(--font-display);
+  font-size: 0.78rem;
+  font-weight:600;
+  letter-spacing:0.6px;
+  text-transform:uppercase;
+  position:relative;
+  box-shadow: 0 3px 6px rgba(0,0,0,0.25);
+  margin-bottom:18px;
+}
+.tag::before{
+  content:"";
+  width:8px; height:8px;
+  border-radius:50%;
+  background: var(--page-a);
+  box-shadow: inset 0 1px 2px rgba(0,0,0,0.4);
+}
+
+.page__icon{ font-size:1.05rem; }
+
+/* =========================================================
+   6. CAPA
+   ========================================================= */
+.cover{
+  background:
+    repeating-linear-gradient(115deg, #23262B 0px, #23262B 3px, #1A1C20 4px, #23262B 7px) !important;
+  align-items:center;
+  justify-content:center;
+  text-align:center;
+  color: var(--page-a);
+  gap: 18px;
+}
+.cover__emblem{
+  width:150px; height:150px;
+  border-radius:50%;
+  border: 3px solid var(--brass-light);
+  display:flex; align-items:center; justify-content:center;
+  font-size:2.4rem;
+  background: radial-gradient(circle at 35% 30%, #2E3138, #17181B);
+  box-shadow: 0 0 0 6px rgba(192,138,40,0.08);
+  overflow:hidden;
+  padding:14px;
+}
+.cover__emblem img{
+  width:100%; height:100%;
+  object-fit:contain;
+}
+.cover__title{
+  font-family: var(--font-display);
+  font-size: 2.2rem;
+  font-weight:700;
+  letter-spacing: 1px;
+  line-height:1.15;
+  text-transform: uppercase;
+  margin:0;
+  color: var(--brass-light);
+}
+.cover__subtitle{
+  font-size:0.82rem;
+  letter-spacing: 3px;
+  text-transform:uppercase;
+  color:#9A9EA6;
+  margin:0;
+}
+.cover__hint{
+  margin-top:20px;
+  font-size:0.72rem;
+  color:#6E7178;
+  border:1px solid #3A3D43;
+  border-radius:999px;
+  padding:8px 16px;
+}
+
+/* =========================================================
+   7. ÍNDICE
+   ========================================================= */
+.index-list{ display:flex; flex-direction:column; gap:10px; margin-top:4px; overflow-y:auto; flex:1; min-height:0; touch-action: pan-y; }
+.index-item{
+  display:flex; align-items:center; gap:12px;
+  background: rgba(255,255,255,0.35);
+  border: 1px solid rgba(0,0,0,0.08);
+  border-radius:8px;
+  padding: 11px 12px;
+  text-align:left;
+}
+.index-item__icon{
+  width:30px; height:30px; border-radius:50%;
+  background: var(--steel-blue); color:#fff;
+  display:flex; align-items:center; justify-content:center;
+  font-size:0.85rem; flex-shrink:0;
+}
+.index-item__label{ font-weight:600; font-size:0.88rem; flex:1; }
+.index-item__page{ font-family:var(--font-mono); font-size:0.72rem; color:var(--ink-dim); }
+
+/* =========================================================
+   8. TÍTULO E DESCRIÇÃO DA PÁGINA
+   ========================================================= */
+.page__title{
+  font-family: var(--font-display);
+  font-size: 1.35rem;
+  font-weight:700;
+  margin: 0 0 4px;
+  color: var(--ink);
+}
+.page__desc{
+  font-size:0.78rem;
+  color: var(--ink-dim);
+  margin: 0 0 18px;
+}
+
+/* =========================================================
+   9. PRODUTOS: cartão com foto, nome, descrição e preço
+   ========================================================= */
+.products{ display:flex; flex-direction:column; gap:16px; overflow-y:auto; flex:1; touch-action: pan-y; }
+
+.product{
+  display:flex; gap:16px;
+  align-items:center;
+  background: rgba(255,255,255,0.4);
+  border: 1px solid rgba(0,0,0,0.08);
+  border-radius:8px;
+  padding: 14px;
+  flex-shrink:0;
+}
+.product__icon{
+  flex-shrink:0;
+  width:140px; height:78px;
+  border-radius:8px;
+  display:flex; align-items:center; justify-content:center;
+  font-size:2.5rem;
+  background: #FFFFFF;
+  box-shadow: inset 0 0 0 1px rgba(0,0,0,0.08);
+  overflow:hidden;
+}
+.product__icon svg{
+  width:100%;
+  height:100%;
+}
+.product__icon img{
+  width:100%;
+  height:100%;
+  object-fit: contain;
+  object-position: center;
+  display:block;
+}
+/* Ajustes de tamanho por foto ([data-foto], [data-cat]): ver ajustes-fotos.css, seção 1 */
+.product__body{ flex:1; min-width:0; }
+.product__name{ font-weight:600; font-size:0.86rem; margin:0 0 2px; }
+.product__desc{ font-size:0.72rem; color:var(--ink-dim); margin:0 0 6px; line-height:1.3; }
+.product__price{
+  font-family: var(--font-mono);
+  font-size:0.8rem;
+  font-weight:600;
+  color: var(--brass);
+}
+
+.product__meta{
+  display:flex;
+  align-items:center;
+  flex-wrap:wrap;
+  gap:8px;
+}
+.product__tag{
+  font-family: var(--font-mono);
+  font-size:0.6rem;
+  font-weight:600;
+  text-transform:uppercase;
+  letter-spacing:0.4px;
+  color:#fff;
+  background: var(--steel-blue);
+  padding: 2px 8px;
+  border-radius: 999px;
+}
+
+.product-group{
+  font-family: var(--font-mono);
+  font-size:0.66rem;
+  font-weight:600;
+  text-transform:uppercase;
+  letter-spacing:0.8px;
+  color: var(--ink-dim);
+  padding-top:10px;
+  margin-top:2px;
+  border-top: 1px dashed rgba(0,0,0,0.18);
+}
+.product-group:first-child{ border-top:none; padding-top:0; margin-top:0; }
+
+/* =========================================================
+   10. GRUPOS DE FECHADURA: 1 foto por modelo, esticada por toda
+   a seção (igual à planilha: foto | nome | condição | preço)
+   ========================================================= */
+.lock-group{
+  background: rgba(255,255,255,0.4);
+  border: 1px solid rgba(0,0,0,0.08);
+  border-radius: 8px;
+  overflow: hidden;
+  flex-shrink: 0;
+}
+.lock-group__title{
+  font-weight:600; font-size:0.8rem; margin:0; color:#fff;
+  background: linear-gradient(180deg,#2B2E33,#1C1E22);
+  padding: 8px 14px;
+}
+.lock-group__content{
+  display:flex;
+  align-items:stretch;
+}
+.lock-group__photo{
+  flex-shrink:0;
+  width:84px;
+  display:flex; align-items:center; justify-content:center;
+  font-size:1.6rem;
+  background: linear-gradient(160deg,#DEE1E5,#B7BBC1);
+  box-shadow: inset 0 0 0 1px rgba(0,0,0,0.08);
+  overflow:hidden;
+}
+.lock-group__photo img{ width:100%; height:100%; object-fit:cover; display:block; }
+/* Largura/enquadramento de cada grupo ([data-grupo]): ver ajustes-fotos.css, seção 2 */
+.lock-group__items{
+  flex:1; min-width:0;
+  display:flex; flex-direction:column;
+}
+.lock-item{
+  display:flex; flex-direction:column; gap:3px;
+  padding: 7px 10px;
+  border-top: 1px solid rgba(0,0,0,0.06);
+}
+.lock-item:first-child{ border-top:none; }
+.lock-item__top{
+  display:flex; align-items:baseline; gap:6px;
+}
+.lock-item__name{ font-size:0.74rem; color:var(--ink); }
+.lock-item__cond{
+  font-family: var(--font-mono);
+  font-size:0.56rem;
+  text-transform:uppercase;
+  letter-spacing:0.4px;
+  color:#fff;
+  background: var(--steel-blue);
+  padding: 2px 7px;
+  border-radius: 999px;
+  white-space:nowrap;
+  flex-shrink:0;
+}
+/* Foto própria de um item do grupo (opcional). Aparece quando, no editor,
+   o item está em "Foto individual". Sem ela, o item usa só a foto do grupo. */
+.lock-item__foto{
+  width:44px; height:44px;
+  border-radius:6px;
+  overflow:hidden;
+  flex-shrink:0;
+  background:#fff;
+  box-shadow: inset 0 0 0 1px rgba(0,0,0,0.08);
+}
+.lock-item__foto img{ width:100%; height:100%; object-fit:cover; display:block; }
+.lock-item--com-foto{ flex-direction:row; align-items:center; gap:10px; }
+.lock-item--com-foto .lock-item__texto{ flex:1; min-width:0; display:flex; flex-direction:column; gap:3px; }
+.lock-item__price{
+  font-family: var(--font-mono);
+  font-size:0.78rem;
+  font-weight:600;
+  color: var(--brass);
+  align-self:flex-end;
+}
+
+/* =========================================================
+   11. CONTROLES: setas e indicador "3 / 11"
+   ========================================================= */
+.controls{
+  display:flex; align-items:center; gap:18px;
+  margin-top: 22px;
+}
+.controls__btn{
+  width:42px; height:42px;
+  border-radius:50%;
+  background: #1C1F24;
+  border: 1px solid #33373D;
+  color: var(--brass-light);
+  font-size:1.3rem;
+  display:flex; align-items:center; justify-content:center;
+}
+.controls__btn:active{ transform: scale(0.92); }
+.controls__btn:disabled{ opacity:0.3; }
+
+.controls__indicator{
+  font-family: var(--font-mono);
+  font-size:0.78rem;
+  color:#9A9EA6;
+  min-width:52px;
+  text-align:center;
+}
+
+.controls__hint{
+  margin-top:14px;
+  font-size:0.68rem;
+  color:#5A5D63;
+  text-align:center;
+}
+
+/* =========================================================
+   12. BOTÕES FLUTUANTES: menu e imprimir
+   ========================================================= */
+.menu-fab{
+  position: fixed;
+  top: 16px;
+  right: 16px;
+  z-index: 900;
+  width:44px; height:44px;
+  border-radius:50%;
+  background: #1C1F24;
+  border: 1px solid #33373D;
+  color: var(--brass-light);
+  display:flex; align-items:center; justify-content:center;
+  box-shadow: 0 4px 10px rgba(0,0,0,0.4);
+}
+.menu-fab:active{ transform: scale(0.92); }
+
+.print-fab{
+  position: fixed;
+  top: 16px;
+  right: 68px;
+  z-index: 900;
+  width:44px; height:44px;
+  border-radius:50%;
+  background: #1C1F24;
+  border: 1px solid #33373D;
+  color: var(--brass-light);
+  display:flex; align-items:center; justify-content:center;
+  box-shadow: 0 4px 10px rgba(0,0,0,0.4);
+}
+.print-fab:active{ transform: scale(0.92); }
+
+/* =========================================================
+   13. IMPRESSÃO EM A4 (desempilha as páginas do livro)
+   ========================================================= */
+@media print{
+  @page{ size:A4; margin:12mm; }
+
+  html,body{ width:auto; height:auto; }
+  body{
+    background:#fff !important;
+    min-height:0 !important;
+    overflow:visible !important;
+  }
+  *{ -webkit-print-color-adjust:exact !important; print-color-adjust:exact !important; }
+
+  .menu-fab, .print-fab, .controls, .controls__hint, .stage__glow,
+  .menu-overlay, .menu-panel{ display:none !important; }
+
+  /* remove o "palco" (padding/centralização/altura de viewport) que sobrava
+     espaço em branco e empurrava o livro para fora da folha */
+  .stage{
+    display:block !important;
+    min-height:0 !important;
+    height:auto !important;
+    padding:0 !important;
+    margin:0 !important;
+  }
+
+  .book{
+    position:static !important;
+    width:100% !important; height:auto !important;
+    margin:0 !important;
+    perspective:none !important;
+    filter:none !important;
+  }
+
+  /* cada página do livro vira uma folha A4 própria, ocupando toda a
+     área útil da folha (largura e altura), sem sobrar nem faltar espaço */
+  .page{
+    position:relative !important;
+    inset:auto !important;
+    transform:none !important;
+    box-shadow:none !important;
+    border-radius:0 !important;
+    width:100% !important;
+    min-height: calc(297mm - 24mm); /* altura útil de uma folha A4 com margem de 12mm */
+    height:auto !important;
+    box-sizing:border-box;
+    display:block !important;   /* era flex; em bloco o conteúdo flui e quebra corretamente entre folhas */
+    page-break-after: always;
+    break-after: page;
+    overflow:visible !important;
+  }
+  .page:last-of-type{
+    page-break-after: auto;
+    break-after: auto;
+  }
+  .page::after{ display:none !important; }
+
+  /* CAPA: a regra genérica acima trocou o .page para display:block, o que
+     quebrava a centralização (ela depende de flex). Aqui devolvemos o
+     flex + centralização e travamos a altura em uma folha A4 inteira,
+     garantindo que o fundo escuro preencha 100% da folha e a logo/título
+     fiquem centralizados no meio dela. */
+  .page.cover{
+    display:flex !important;
+    flex-direction:column;
+    align-items:center;
+    justify-content:center;
+    text-align:center;
+    height: calc(297mm - 24mm) !important;
+    min-height: calc(297mm - 24mm) !important;
+  }
+
+  /* a lista de produtos também precisa virar bloco (era flex:1 + scroll,
+     o que fazia o navegador jogar a seção inteira para a próxima folha
+     em vez de preencher o espaço que sobrava na folha atual) */
+  .products{
+    display:block !important;
+    overflow:visible !important;
+    flex:none !important;
+    height:auto !important;
+  }
+  .products > *{ margin-bottom:16px; }
+  .products > *:last-child{ margin-bottom:0; }
+
+  /* nunca corta um card de produto nem um grupo de fechadura ao meio —
+     se não couber o que resta da folha, o item inteiro vai para a próxima */
+  .product, .lock-group{
+    break-inside: avoid;
+    page-break-inside: avoid;
+  }
+  /* O bloco de grupo (título + produtos) PODE quebrar entre folhas quando
+     for maior que o espaço restante — isso evita que grupos grandes (ex.:
+     Cadeado Yale, Miolo Yale Pequeno) sejam empurrados inteiros para a
+     próxima folha, deixando a folha atual vazia. O título fica preso ao
+     início do grupo por causa do break-after:avoid em .product-group,
+     e cada card de produto continua inteiro por causa da regra acima. */
+  .product-group-block{
+    display:block;
+    break-inside: auto;
+    page-break-inside: auto;
+  }
+  .product-group, .tag, .page__desc{
+    break-after: avoid;
+    page-break-after: avoid;
+  }
+}
+
+/* =========================================================
+   14. PAINEL DE NAVEGAÇÃO RÁPIDA (menu "Ir para")
+   ========================================================= */
+.menu-overlay{
+  position:fixed; inset:0;
+  background: rgba(0,0,0,0.55);
+  z-index: 950;
+  opacity:0; pointer-events:none;
+  transition: opacity .2s ease;
+}
+.menu-overlay.show{ opacity:1; pointer-events:auto; }
+
+.menu-panel{
+  position:fixed;
+  top:0; right:0; bottom:0;
+  z-index: 960;
+  width: min(300px, 82vw);
+  background: #1A1C20;
+  color: var(--page-a);
+  border-radius: 16px 0 0 16px;
+  padding: 20px 16px 20px;
+  transform: translateX(100%);
+  transition: transform .3s ease;
+  overflow-y:auto;
+  box-shadow: -8px 0 24px rgba(0,0,0,0.4);
+}
+.menu-panel.open{ transform: translateX(0); }
+
+.menu-panel__header{
+  display:flex; align-items:center; justify-content:space-between;
+  margin-bottom: 16px;
+}
+.menu-panel__header h2{
+  font-family: var(--font-display);
+  font-size: 1.05rem;
+  margin:0;
+  color: var(--brass-light);
+}
+.menu-panel__close{ font-size:1.6rem; color:#8A8D93; }
+
+.menu-panel__list{ display:flex; flex-direction:column; gap:8px; }
+
+.menu-panel__item{
+  display:flex; align-items:center; gap:12px;
+  background: rgba(255,255,255,0.06);
+  border: 1px solid rgba(255,255,255,0.08);
+  border-radius:8px;
+  padding: 11px 12px;
+  text-align:left;
+  color: var(--page-a);
+}
+.menu-panel__item.active{
+  border-color: var(--brass-light);
+  background: rgba(192,138,40,0.12);
+}
+.menu-panel__item-icon{
+  width:28px; height:28px; border-radius:50%;
+  background: var(--steel-blue);
+  display:flex; align-items:center; justify-content:center;
+  font-size:0.8rem; flex-shrink:0;
+}
+.menu-panel__item-label{ font-weight:600; font-size:0.86rem; flex:1; }
+.menu-panel__item-page{ font-family:var(--font-mono); font-size:0.7rem; color:#8A8D93; }
+
+/* =========================================================
+   15. RESPONSIVO
+   ========================================================= */
+@media (min-width: 480px){
+  .book{ margin-left:14px; }
+}
+
+/* =========================================================
+   16. ESTADO DE CARREGAMENTO
+   Evita o "flash" no celular: enquanto o JS ainda não montou
+   as páginas, o livro/controles ficam invisíveis (em vez de
+   mostrar "1 / 1" e uma página vazia por um instante).
+   ========================================================= */
+.stage:not(.ready) .book,
+.stage:not(.ready) .controls,
+.stage:not(.ready) .controls__hint{
+  opacity: 0;
+}
+.book,
+.controls,
+.controls__hint{
+  transition: opacity .25s ease;
+}
+.stage:not(.ready)::after{
+  content:"";
+  position:absolute;
+  top:50%; left:50%;
+  width:34px; height:34px;
+  margin:-17px 0 0 -17px;
+  border-radius:50%;
+  border:3px solid rgba(192,138,40,0.25);
+  border-top-color: var(--brass-light);
+  animation: catalogo-spin .8s linear infinite;
+}
+@keyframes catalogo-spin{
+  to{ transform: rotate(360deg); }
+}

@@ -1,0 +1,14 @@
+# Dependências (instaladas com "npm install", só para os testes no navegador)
+node_modules/
+package-lock.json
+
+# Arquivos do sistema e de editores
+.DS_Store
+Thumbs.db
+desktop.ini
+.vscode/
+.idea/
+
+# Catálogos baixados do editor antes de importar (ficam fora do repositório)
+*-baixado.html
+catalogo-chaveiro-senador-20*.html

@@ -1,0 +1,80 @@
+<!DOCTYPE html>
+<!--
+    =====================================================================
+    EDITOR DO CATÁLOGO - CHAVEIRO SENADOR
+    =====================================================================
+    Ferramenta que roda só no navegador (nada é enviado para servidor).
+
+    Como usar:
+      1. Abra este arquivo no navegador (duplo clique).
+      2. "Carregar catálogo (.html)" e escolha dist/catalogo-chaveiro-senador.html.
+      3. Edite categorias, produtos, preços e fotos.
+      4. "Baixar catálogo atualizado": baixa um novo .html já com as mudanças.
+      5. (Opcional, para manter o código-fonte em dia)
+         npm run importar -- caminho/do/arquivo-baixado.html
+
+    Arquivos do editor:
+      css/editor.css            visual escuro do editor
+      js/declaracoes.js         lê/troca "const NOME = ..." dentro do catálogo
+      js/estado.js              dados carregados (categorias, fotos...) e tabelas fixas
+      js/util.js                funções pequenas (escape, slug, ids, campos)
+      js/fotos.js               qual foto mostrar na pré-visualização
+      js/carregar.js            abre o arquivo e lê os dados
+      js/render-produtos.js     cartão de produto comum
+      js/render-fechaduras.js   grupos de fechadura e seus itens
+      js/render-categorias.js   cartões das categorias (abre/fecha, move, exclui)
+      js/exportar.js            monta e baixa o catálogo atualizado
+      js/app.js                 liga os botões da tela
+
+    "npm run build" também gera dist/editor-catalogo.html: este mesmo
+    editor em um único arquivo (para mandar para alguém sem a pasta).
+    =====================================================================
+-->
+<html lang="pt-BR">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Editor do Catálogo — Chaveiro Senador</title>
+<link rel="stylesheet" href="css/editor.css">
+</head>
+<body>
+
+<!-- Barra fixa do topo: título e ações principais -->
+<header>
+  <h1>Editor do Catálogo <span>Chaveiro Senador — ferramenta externa (roda só no seu navegador)</span></h1>
+  <div class="toolbar">
+    <input type="file" id="file-input" accept=".html">
+    <button class="btn-brass" id="load-btn">Carregar catálogo (.html)</button>
+    <button class="btn-ghost" id="save-btn" disabled>Baixar catálogo atualizado</button>
+  </div>
+</header>
+
+<main>
+  <!-- Mostrado enquanto nenhum catálogo foi carregado -->
+  <div id="empty-state">
+    <div class="big">Nenhum catálogo carregado ainda.</div>
+    <div>Clique em "Carregar catálogo (.html)" e selecione o arquivo do catálogo que você já tem.<br>
+    Tudo é processado localmente no seu navegador — nada é enviado para nenhum servidor.</div>
+  </div>
+
+  <!-- Área de edição: aviso de versão antiga, lista de categorias e botão de nova categoria -->
+  <div id="editor-root" hidden>
+    <div class="warn-banner" id="parse-warning"></div>
+    <div id="categories-list"></div>
+    <button id="add-category-btn">+ Adicionar nova categoria</button>
+  </div>
+</main>
+
+<!-- A ordem importa: cada arquivo usa o que os anteriores definiram -->
+<script src="js/declaracoes.js"></script>
+<script src="js/estado.js"></script>
+<script src="js/util.js"></script>
+<script src="js/fotos.js"></script>
+<script src="js/carregar.js"></script>
+<script src="js/render-produtos.js"></script>
+<script src="js/render-fechaduras.js"></script>
+<script src="js/render-categorias.js"></script>
+<script src="js/exportar.js"></script>
+<script src="js/app.js"></script>
+</body>
+</html>

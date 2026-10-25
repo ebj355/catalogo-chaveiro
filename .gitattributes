@@ -1,0 +1,9 @@
+# Texto com quebra de linha normalizada; imagens sempre como binário
+* text=auto
+*.png binary
+*.jpg binary
+*.jpeg binary
+*.webp binary
+*.gif binary
+# O catálogo gerado tem fotos em base64 em linhas enormes: não mostrar diff
+dist/*.html -diff linguist-generated

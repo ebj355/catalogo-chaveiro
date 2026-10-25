@@ -1,0 +1,18 @@
+{
+  "name": "catalogo-chaveiro-senador",
+  "version": "1.0.0",
+  "private": true,
+  "description": "Catálogo digital (livro de páginas) do Chaveiro Senador e o editor do catálogo. Gera um único .html que funciona offline.",
+  "scripts": {
+    "build": "node ferramentas/build.js",
+    "importar": "node ferramentas/importar.js",
+    "test": "node testes/unitarios.js",
+    "test:e2e": "node testes/e2e.js"
+  },
+  "devDependencies": {
+    "playwright": "^1.63.0"
+  },
+  "engines": {
+    "node": ">=18"
+  }
+}

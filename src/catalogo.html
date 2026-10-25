@@ -1,0 +1,82 @@
+<!DOCTYPE html>
+<!--
+    =====================================================================
+    CATÁLOGO DIGITAL - CHAVEIRO SENADOR  (modelo usado pelo build)
+    =====================================================================
+    Este arquivo é só o ESQUELETO do catálogo. Não abra este arquivo direto
+    no navegador: rode "npm run build" e abra dist/catalogo-chaveiro-senador.html.
+
+    O build (ferramentas/build.js) troca os dois marcadores deste arquivo
+    (comentários com @@ESTILOS@@ e @@SCRIPTS@@):
+      @@ESTILOS@@  -> <style> com src/css/catalogo.css + ajustes-fotos.css
+      @@SCRIPTS@@  -> <script> com os dados (src/dados), as fotos
+                      (src/imagens, em base64) e o código (src/js)
+
+    Resultado: UM ÚNICO arquivo .html, que funciona offline, pode ser
+    mandado por WhatsApp/e-mail e é aberto/editado pelo editor.
+
+    Estrutura da página:
+      .stage            palco escuro que centraliza tudo
+        .menu-fab       botão "☰" (abre o painel "Ir para")
+        .print-fab      botão de imprimir em A4
+        #book           o livro; as páginas são criadas pelo src/js/paginas.js
+        .controls       setas ‹ › e indicador "1 / 11"
+      .menu-overlay / .menu-panel   painel lateral de navegação rápida
+    =====================================================================
+-->
+<html lang="pt-BR">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+<!-- Avisa ao editor que este catálogo já entende fotos individuais e de grupo -->
+<meta name="CATALOGO_EDITOR_FOTOS_V2" content="individual-e-grupo">
+<title>Chaveiro Senador — Catálogo Digital</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Oswald:wght@500;600;700&family=Inter:wght@400;500;600&family=IBM+Plex+Mono:wght@500;600&display=swap" rel="stylesheet">
+<!-- @@ESTILOS@@ -->
+</head>
+<body>
+
+  <div class="stage">
+
+    <!-- Brilho dourado suave atrás do livro (só decoração) -->
+    <div class="stage__glow"></div>
+
+    <!-- Botões flutuantes no canto superior direito -->
+    <button class="menu-fab" id="menuBtn" aria-label="Abrir menu de páginas">
+      <svg viewBox="0 0 24 24" width="20" height="20" fill="none"><path d="M4 6h16M4 12h16M4 18h16" stroke="currentColor" stroke-width="2" stroke-linecap="round"/></svg>
+    </button>
+
+    <button class="print-fab" id="printBtn" aria-label="Imprimir catálogo em A4" onclick="window.print()">
+      <svg viewBox="0 0 24 24" width="20" height="20" fill="none"><path d="M6 9V3h12v6M6 18H4a1 1 0 0 1-1-1v-6a1 1 0 0 1 1-1h16a1 1 0 0 1 1 1v6a1 1 0 0 1-1 1h-2M6 14h12v7H6z" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"/></svg>
+    </button>
+
+    <!-- O livro: as páginas (capa, índice e uma por categoria) são geradas pelo JS -->
+    <div class="book" id="book"></div>
+
+    <!-- Navegação: página anterior, indicador e próxima página -->
+    <div class="controls">
+      <button class="controls__btn" id="prevBtn" aria-label="Página anterior">‹</button>
+      <div class="controls__indicator" id="pageIndicator">1 / 1</div>
+      <button class="controls__btn" id="nextBtn" aria-label="Próxima página">›</button>
+    </div>
+
+    <p class="controls__hint">Toque nas setas ou arraste para o lado para virar a página</p>
+
+  </div>
+
+  <!-- ===================== MENU DE NAVEGAÇÃO ===================== -->
+  <div class="menu-overlay" id="menuOverlay"></div>
+  <aside class="menu-panel" id="menuPanel">
+    <div class="menu-panel__header">
+      <h2>Ir para</h2>
+      <button class="menu-panel__close" id="menuClose" aria-label="Fechar menu">&times;</button>
+    </div>
+    <div class="menu-panel__list" id="menuList">
+      <!-- preenchido pelo src/js/menu.js -->
+    </div>
+  </aside>
+
+<!-- @@SCRIPTS@@ -->
+</body>
+</html>

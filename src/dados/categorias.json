@@ -1,0 +1,1128 @@
+[
+  {
+    "id": "copia-chaves",
+    "nome": "Cópia de Chaves",
+    "icone": "🔑",
+    "descricao": "Cópias na hora, feitas em máquinas de precisão.",
+    "produtos": [
+      {
+        "nome": "Yale",
+        "desc": "Chave comum, tipo pino. Modelo clássico.",
+        "preco": "R$ 8,00",
+        "tipo": "yale"
+      },
+      {
+        "nome": "Tetra",
+        "desc": "Chave de fechadura tetra externa. 4 curvas.",
+        "preco": "R$ 20,00",
+        "tipo": "tetra"
+      },
+      {
+        "nome": "Porta de Aço",
+        "desc": "Chave reforçada para portas de aço e blindadas.",
+        "preco": "R$ 15,00",
+        "tipo": "aco"
+      },
+      {
+        "nome": "Gorge",
+        "desc": "Chave tipo gorge, para móveis e portas antigas.",
+        "preco": "R$ 14,00",
+        "tipo": "gorge"
+      },
+      {
+        "nome": "MultiPonto Simples",
+        "desc": "Chave com múltiplos pontos de encaixe. Simples.",
+        "preco": "R$ 40,00",
+        "tipo": "multiponto-simples"
+      },
+      {
+        "nome": "MultiPonto",
+        "desc": "Chave com múltiplos pontos de encaixe. Padrão.",
+        "preco": "R$ 40,00",
+        "tipo": "multiponto"
+      },
+      {
+        "nome": "MultiPonto Plástica",
+        "desc": "Chave com múltiplos pontos com empunhadura plástica.",
+        "preco": "R$ 40,00",
+        "tipo": "multiponto-plastica"
+      },
+      {
+        "nome": "Keso",
+        "desc": "Chave de alta segurança. Sistema cilíndrico avançado.",
+        "preco": "R$ 80,00",
+        "tipo": "keso"
+      }
+    ]
+  },
+  {
+    "id": "aberturas",
+    "nome": "Aberturas",
+    "icone": "🔓",
+    "descricao": "Serviços de abertura e destravamento no local.",
+    "produtos": [
+      {
+        "nome": "Chave Yale",
+        "desc": "Serviço de destravamento no local.",
+        "preco": "Sob consulta",
+        "foto": "chave_yale"
+      },
+      {
+        "nome": "Chave Tetra",
+        "desc": "Serviço de destravamento no local.",
+        "preco": "Sob consulta",
+        "foto": "chave_tetra"
+      },
+      {
+        "nome": "Cadeado de Chão",
+        "desc": "Serviço de destravamento no local.",
+        "preco": "Sob consulta",
+        "foto": "cadeado_chao"
+      },
+      {
+        "nome": "Autos em Geral",
+        "desc": "Serviço de destravamento no local.",
+        "preco": "Sob consulta",
+        "foto": "autos_geral"
+      },
+      {
+        "nome": "Cofre Parede",
+        "desc": "Serviço de destravamento no local.",
+        "preco": "Sob consulta",
+        "foto": "cofre_parede"
+      },
+      {
+        "nome": "Cofre Chão",
+        "desc": "Serviço de destravamento no local.",
+        "preco": "Sob consulta",
+        "foto": "cofre_chao"
+      }
+    ]
+  },
+  {
+    "id": "chaves-codificadas",
+    "nome": "Chaves Codificadas",
+    "icone": "🚗",
+    "descricao": "Confecção e programação de chaves com chip.",
+    "produtos": [
+      {
+        "nome": "Chave Codificada Simples (Reserva)",
+        "desc": "Confecção e programação na loja. GM, Volks, Fiat, Ford.",
+        "preco": "R$ 150,00",
+        "foto": "chave_codificada_simples"
+      },
+      {
+        "nome": "Chave Codificada Moto (variadas)",
+        "desc": "Para a maioria das marcas populares.",
+        "preco": "R$ 120,00",
+        "foto": "chave_codificada_moto"
+      },
+      {
+        "nome": "Reprogramação Chave-Canivete",
+        "desc": "Reprogramação de chave já existente.",
+        "preco": "R$ 180,00",
+        "foto": "reprogramacao_canivete"
+      },
+      {
+        "nome": "Cópia de Telecomando Original",
+        "desc": "Cópia de chave com telecomando.",
+        "preco": "R$ 220,00",
+        "foto": "telecomando_original"
+      }
+    ]
+  },
+  {
+    "id": "chaveirinho",
+    "nome": "Chaveirinho",
+    "icone": "🔗",
+    "descricao": "Personalize seu chaveiro com argolas, identificadores e pingentes.",
+    "produtos": [
+      {
+        "nome": "6 Mini Argolas",
+        "desc": "Kit com 6 mini argolas para chaveiro.",
+        "preco": "R$ 1,00",
+        "foto": "argolas"
+      },
+      {
+        "nome": "Identificador",
+        "desc": "Plaquinha de identificação para o molho de chaves.",
+        "preco": "R$ 1,00",
+        "foto": "identificador"
+      },
+      {
+        "nome": "Marca de Carro",
+        "desc": "Pingente com o emblema da marca do veículo.",
+        "preco": "R$ 10,00",
+        "foto": "marca"
+      },
+      {
+        "nome": "Mosquetão",
+        "desc": "Mosquetão resistente para prender o chaveiro.",
+        "preco": "R$ 8,00",
+        "foto": "mosquetao"
+      },
+      {
+        "nome": "Personagens",
+        "desc": "Pingentes de personagens variados.",
+        "preco": "R$ 8,00",
+        "foto": "personagens"
+      }
+    ]
+  },
+  {
+    "id": "controle-portao",
+    "nome": "Controle de Portão",
+    "icone": "📡",
+    "descricao": "Controles remotos para portão, com codificação na hora.",
+    "produtos": [
+      {
+        "nome": "Peccinin",
+        "desc": "Controle remoto para portão automático.",
+        "preco": "R$ 55,00",
+        "foto": "peccinin"
+      },
+      {
+        "nome": "Garem",
+        "desc": "Controle remoto para portão automático.",
+        "preco": "R$ 65,00",
+        "foto": "garem"
+      },
+      {
+        "nome": "Controle 4 Botões clonador",
+        "desc": "Controle remoto multifuncional, 4 botões.",
+        "preco": "R$ 45,00",
+        "foto": "gold4"
+      },
+      {
+        "nome": "Reposição de Controle Linear (Nice)",
+        "desc": "Controle remoto para portão automático.",
+        "preco": "R$ 65,00",
+        "foto": "reposicaolinear"
+      },
+      {
+        "nome": "Codificação na Casa do Cliente",
+        "desc": "Codificação no local, usando controle do chaveiro.",
+        "preco": "Peça + R$ 30,00",
+        "foto": "codificacaocliente"
+      }
+    ]
+  },
+  {
+    "id": "miolos",
+    "nome": "Miolos",
+    "icone": "🧩",
+    "descricao": "Miolos (cilindros) para reposição e troca de segredo.",
+    "produtos": [
+      {
+        "grupo": "Miolo de Porta Yale (Pequeno)",
+        "nome": "Papaiz",
+        "preco": "R$ 45,00",
+        "foto": "papaiz"
+      },
+      {
+        "grupo": "Miolo de Porta Yale (Pequeno)",
+        "nome": "Stam",
+        "preco": "R$ 35,00",
+        "foto": "stam"
+      },
+      {
+        "grupo": "Miolo de Porta Yale (Pequeno)",
+        "nome": "Pado",
+        "preco": "R$ 40,00",
+        "foto": "pado"
+      },
+      {
+        "grupo": "Miolo de Porta Yale (Pequeno)",
+        "nome": "Lockwell",
+        "preco": "R$ 85,00",
+        "foto": "lockwell"
+      },
+      {
+        "grupo": "Miolo de Porta Yale (Pequeno)",
+        "nome": "Fama",
+        "preco": "R$ 45,00",
+        "foto": "fama"
+      },
+      {
+        "grupo": "Miolo de Porta Yale (Pequeno)",
+        "nome": "Outros",
+        "desc": "Aliança, Piller, 3F.",
+        "preco": "R$ 35,00",
+        "foto": "outros"
+      },
+      {
+        "grupo": "Miolo de Gaveta",
+        "nome": "Curto",
+        "preco": "R$ 25,00",
+        "foto": "curto"
+      },
+      {
+        "grupo": "Miolo de Gaveta",
+        "nome": "Longo",
+        "preco": "R$ 25,00",
+        "foto": "longo"
+      },
+      {
+        "grupo": "Miolo de Porta Yale (Grande)",
+        "nome": "Papaiz Original",
+        "preco": "R$ 55,00",
+        "foto": "papaiz_original"
+      },
+      {
+        "grupo": "Miolo de Porta Yale (Grande)",
+        "nome": "Gold",
+        "preco": "R$ 57,00",
+        "foto": "gold"
+      },
+      {
+        "grupo": "Miolo de Porta Yale (Grande)",
+        "nome": "Lafont",
+        "preco": "R$ 57,00",
+        "foto": "lafont"
+      },
+      {
+        "grupo": "Miolo de Porta Yale (Grande)",
+        "nome": "Fama",
+        "preco": "R$ 45,00",
+        "foto": "fama_grande"
+      },
+      {
+        "grupo": "Miolo de Porta Yale (Grande)",
+        "nome": "Lockwell",
+        "preco": "R$ 85,00",
+        "foto": "lockwell_grande"
+      },
+      {
+        "grupo": "Miolo Tetra",
+        "nome": "Stam Grande",
+        "preco": "R$ 95,00",
+        "foto": "stam_grande"
+      },
+      {
+        "grupo": "Miolo Tetra",
+        "nome": "Stam Pequeno",
+        "preco": "R$ 85,00",
+        "foto": "stam_pequeno"
+      },
+      {
+        "grupo": "Miolo Tetra",
+        "nome": "Lockwell",
+        "preco": "R$ 180,00",
+        "foto": "lockwell_tetra"
+      },
+      {
+        "grupo": "Miolo Tetra",
+        "nome": "Aliança",
+        "preco": "R$ 95,00",
+        "foto": "alianca_tetra"
+      }
+    ]
+  },
+  {
+    "id": "fechaduras",
+    "nome": "Fechaduras",
+    "icone": "🚪",
+    "descricao": "Fechaduras completas, refis e serviços de instalação.",
+    "produtos": [
+      {
+        "grupo": "Fechadura Gorge",
+        "nome": "Arouca 40mm",
+        "preco": "R$ 80,00",
+        "condicao": "Balcão"
+      },
+      {
+        "grupo": "Fechadura Gorge",
+        "nome": "Instalação",
+        "preco": "R$ 170,00",
+        "condicao": "Com Corte"
+      },
+      {
+        "grupo": "Fechadura Gorge",
+        "nome": "Instalação",
+        "preco": "R$ 130,00",
+        "condicao": "Sem Corte"
+      },
+      {
+        "grupo": "Fechadura Gorge",
+        "nome": "Arouca 55mm",
+        "preco": "R$ 130,00",
+        "condicao": "Balcão"
+      },
+      {
+        "grupo": "Fechadura Gorge",
+        "nome": "Instalação",
+        "preco": "R$ 200,00",
+        "condicao": "Com Corte"
+      },
+      {
+        "grupo": "Fechadura Gorge",
+        "nome": "Instalação",
+        "preco": "R$ 170,00",
+        "condicao": "Sem Corte"
+      },
+      {
+        "grupo": "Fechadura Porta de Banheiro",
+        "nome": "40mm",
+        "preco": "R$ 85,00",
+        "condicao": "Balcão"
+      },
+      {
+        "grupo": "Fechadura Porta de Banheiro",
+        "nome": "45mm e 55mm",
+        "preco": "R$ 80,00",
+        "condicao": "Balcão"
+      },
+      {
+        "grupo": "Fechadura Porta de Banheiro",
+        "nome": "Instalação",
+        "preco": "R$ 70,00",
+        "condicao": "Com Corte"
+      },
+      {
+        "grupo": "Fechadura Porta de Banheiro",
+        "nome": "Instalação",
+        "preco": "R$ 40,00",
+        "condicao": "Sem Corte"
+      },
+      {
+        "grupo": "Fechadura Porta de Vidro",
+        "nome": "Refil",
+        "preco": "R$ 60,00",
+        "condicao": "Balcão"
+      },
+      {
+        "grupo": "Fechadura Porta de Vidro",
+        "nome": "Refil com Acabamento",
+        "preco": "R$ 80,00",
+        "condicao": "Balcão"
+      },
+      {
+        "grupo": "Fechadura Porta de Vidro",
+        "nome": "Troca de Refil",
+        "preco": "R$ 120,00"
+      },
+      {
+        "grupo": "Fechadura Porta de Vidro",
+        "nome": "Troca de Refil com Acabamento",
+        "preco": "R$ 160,00"
+      },
+      {
+        "grupo": "Trava de Vitrine",
+        "nome": "Pequena",
+        "preco": "R$ 35,00",
+        "condicao": "Balcão"
+      },
+      {
+        "grupo": "Trava de Vitrine",
+        "nome": "Grande",
+        "preco": "R$ 45,00",
+        "condicao": "Balcão"
+      },
+      {
+        "grupo": "Trava de Vitrine",
+        "nome": "Instalação",
+        "preco": "R$ 25,00",
+        "condicao": "(+) Valor da Peça"
+      },
+      {
+        "grupo": "Bico de Papagaio",
+        "nome": "Stam Yale",
+        "preco": "R$ 90,00",
+        "condicao": "Balcão"
+      },
+      {
+        "grupo": "Bico de Papagaio",
+        "nome": "Stam Tetra",
+        "preco": "R$ 130,00",
+        "condicao": "Balcão"
+      },
+      {
+        "grupo": "Bico de Papagaio",
+        "nome": "Arouca",
+        "preco": "R$ 90,00",
+        "condicao": "Balcão"
+      },
+      {
+        "grupo": "Bico de Papagaio",
+        "nome": "Instalação",
+        "preco": "R$ 180,00",
+        "condicao": "Sem Corte"
+      },
+      {
+        "grupo": "Bico de Papagaio",
+        "nome": "Instalação",
+        "preco": "R$ 200,00",
+        "condicao": "Com Corte"
+      },
+      {
+        "grupo": "Bico de Papagaio",
+        "nome": "Instalação",
+        "preco": "R$ 240,00",
+        "condicao": "Porta de Ferro"
+      },
+      {
+        "grupo": "Fechadura Perfil Caixa de 22mm",
+        "nome": "Arouca",
+        "preco": "R$ 95,00",
+        "condicao": "Balcão"
+      },
+      {
+        "grupo": "Fechadura Perfil Caixa de 22mm",
+        "nome": "Pado",
+        "preco": "R$ 180,00",
+        "condicao": "Balcão"
+      },
+      {
+        "grupo": "Fechadura Perfil Caixa de 22mm",
+        "nome": "Papaiz",
+        "preco": "R$ 180,00",
+        "condicao": "Balcão"
+      },
+      {
+        "grupo": "Fechadura Perfil Caixa de 22mm",
+        "nome": "Instalação",
+        "preco": "R$ 220,00",
+        "condicao": "Com Corte"
+      },
+      {
+        "grupo": "Fechadura Perfil Caixa de 22mm",
+        "nome": "Instalação",
+        "preco": "R$ 200,00",
+        "condicao": "Sem Corte"
+      },
+      {
+        "grupo": "Fechadura Porta de Divisória",
+        "nome": "Gold",
+        "preco": "R$ 95,00",
+        "condicao": "Balcão"
+      },
+      {
+        "grupo": "Fechadura Porta de Divisória",
+        "nome": "Lockwell",
+        "preco": "R$ 130,00",
+        "condicao": "Balcão"
+      },
+      {
+        "grupo": "Fechadura Porta de Divisória",
+        "nome": "Instalação",
+        "preco": "R$ 95,00",
+        "condicao": "Com Corte"
+      },
+      {
+        "grupo": "Fechadura Porta de Divisória",
+        "nome": "Instalação",
+        "preco": "R$ 130,00",
+        "condicao": "Sem Corte"
+      },
+      {
+        "grupo": "Mola Hidráulica",
+        "nome": "Mola Hidráulica",
+        "preco": "R$ 180,00",
+        "condicao": "Balcão"
+      },
+      {
+        "grupo": "Mola Hidráulica",
+        "nome": "Instalação",
+        "preco": "R$ 280,00"
+      },
+      {
+        "grupo": "Fechadura Yale Caixa de 40mm",
+        "nome": "Pado",
+        "preco": "R$ 140,00",
+        "condicao": "Balcão"
+      },
+      {
+        "grupo": "Fechadura Yale Caixa de 40mm",
+        "nome": "Stam",
+        "preco": "R$ 85,00",
+        "condicao": "Balcão"
+      },
+      {
+        "grupo": "Fechadura Yale Caixa de 40mm",
+        "nome": "Aliança",
+        "preco": "R$ 120,00",
+        "condicao": "Balcão"
+      },
+      {
+        "grupo": "Fechadura Yale Caixa de 40mm",
+        "nome": "Arouca",
+        "preco": "R$ 120,00",
+        "condicao": "Balcão"
+      },
+      {
+        "grupo": "Fechadura Yale Caixa de 40mm",
+        "nome": "Instalação Pado",
+        "preco": "R$ 220,00",
+        "condicao": "Com Corte"
+      },
+      {
+        "grupo": "Fechadura Yale Caixa de 40mm",
+        "nome": "Instalação Pado",
+        "preco": "R$ 200,00",
+        "condicao": "Sem Corte"
+      },
+      {
+        "grupo": "Fechadura Yale Caixa de 40mm",
+        "nome": "Instalação Stam",
+        "preco": "R$ 200,00",
+        "condicao": "Com Corte"
+      },
+      {
+        "grupo": "Fechadura Yale Caixa de 40mm",
+        "nome": "Instalação Stam",
+        "preco": "R$ 180,00",
+        "condicao": "Sem Corte"
+      },
+      {
+        "grupo": "Fechadura Yale Caixa de 40mm",
+        "nome": "Instalação Aliança",
+        "preco": "R$ 220,00",
+        "condicao": "Com Corte"
+      },
+      {
+        "grupo": "Fechadura Yale Caixa de 40mm",
+        "nome": "Instalação Aliança",
+        "preco": "R$ 200,00",
+        "condicao": "Sem Corte"
+      },
+      {
+        "grupo": "Fechadura Yale Caixa de 40mm",
+        "nome": "Instalação Arouca",
+        "preco": "R$ 180,00",
+        "condicao": "Com Corte"
+      },
+      {
+        "grupo": "Fechadura Yale Caixa de 40mm",
+        "nome": "Instalação Arouca",
+        "preco": "R$ 150,00",
+        "condicao": "Sem Corte"
+      },
+      {
+        "grupo": "Fechadura Yale Caixa de 40mm",
+        "nome": "Instalação Gold",
+        "preco": "R$ 180,00",
+        "condicao": "Com Corte"
+      },
+      {
+        "grupo": "Fechadura Yale Caixa de 40mm",
+        "nome": "Instalação Gold",
+        "preco": "R$ 150,00",
+        "condicao": "Sem Corte"
+      },
+      {
+        "grupo": "Fechadura Yale Caixa de 40mm",
+        "nome": "Instalação Soprano",
+        "preco": "R$ 150,00",
+        "condicao": "Com Corte"
+      },
+      {
+        "grupo": "Fechadura Yale Caixa de 40mm",
+        "nome": "Instalação Soprano",
+        "preco": "R$ 130,00",
+        "condicao": "Sem Corte"
+      },
+      {
+        "grupo": "Fechadura Tetra Caixa de 40mm",
+        "nome": "Stam Fume",
+        "preco": "R$ 160,00",
+        "condicao": "Balcão"
+      },
+      {
+        "grupo": "Fechadura Tetra Caixa de 40mm",
+        "nome": "Stam Cromada",
+        "preco": "R$ 160,00",
+        "condicao": "Balcão"
+      },
+      {
+        "grupo": "Fechadura Tetra Caixa de 40mm",
+        "nome": "Instalação",
+        "preco": "R$ 100,00",
+        "condicao": "Com Corte"
+      },
+      {
+        "grupo": "Fechadura Tetra Caixa de 40mm",
+        "nome": "Instalação",
+        "preco": "R$ 60,00",
+        "condicao": "Sem Corte"
+      },
+      {
+        "grupo": "Maçaneta",
+        "nome": "Maçaneta",
+        "preco": "R$ 35,00",
+        "condicao": "Balcão"
+      },
+      {
+        "grupo": "Fechadura Yale Caixa de 45 e 55mm",
+        "nome": "Aliança",
+        "preco": "R$ 200,00",
+        "condicao": "Balcão"
+      },
+      {
+        "grupo": "Fechadura Yale Caixa de 45 e 55mm",
+        "nome": "Arouca",
+        "preco": "R$ 150,00",
+        "condicao": "Balcão"
+      },
+      {
+        "grupo": "Fechadura Yale Caixa de 45 e 55mm",
+        "nome": "Pado",
+        "preco": "R$ 180,00",
+        "condicao": "Balcão"
+      },
+      {
+        "grupo": "Fechadura Yale Caixa de 45 e 55mm",
+        "nome": "Instalação",
+        "preco": "R$ 80,00",
+        "condicao": "Com Corte"
+      },
+      {
+        "grupo": "Fechadura Yale Caixa de 45 e 55mm",
+        "nome": "Instalação",
+        "preco": "R$ 40,00",
+        "condicao": "Sem Corte"
+      },
+      {
+        "grupo": "Fechadura Trio Tetra",
+        "nome": "Aliança",
+        "preco": "R$ 260,00",
+        "condicao": "Balcão"
+      },
+      {
+        "grupo": "Fechadura Trio Tetra",
+        "nome": "Instalação",
+        "preco": "R$ 410,00",
+        "condicao": "Com Corte"
+      },
+      {
+        "grupo": "Fechadura Trio Tetra",
+        "nome": "Instalação",
+        "preco": "R$ 360,00",
+        "condicao": "Sem Corte"
+      },
+      {
+        "grupo": "Trava Auxiliar Tetra",
+        "nome": "Stam Individual",
+        "preco": "R$ 100,00"
+      },
+      {
+        "grupo": "Trava Auxiliar Tetra",
+        "nome": "Stam Par",
+        "preco": "R$ 100,00"
+      },
+      {
+        "grupo": "Trava Auxiliar Tetra",
+        "nome": "Papaiz Individual",
+        "preco": "R$ 100,00"
+      },
+      {
+        "grupo": "Trava Auxiliar Tetra",
+        "nome": "Papaiz Par",
+        "preco": "R$ 100,00"
+      },
+      {
+        "grupo": "Trava Auxiliar Tetra",
+        "nome": "Pado Individual",
+        "preco": "R$ 100,00"
+      },
+      {
+        "grupo": "Trava Auxiliar Tetra",
+        "nome": "Pado Par",
+        "preco": "R$ 100,00"
+      },
+      {
+        "grupo": "Trava Auxiliar Tetra",
+        "nome": "Lockwell Individual",
+        "preco": "R$ 100,00"
+      },
+      {
+        "grupo": "Trava Auxiliar Tetra",
+        "nome": "Lockwell Par",
+        "preco": "R$ 100,00"
+      },
+      {
+        "grupo": "Trava Auxiliar Tetra",
+        "nome": "Arouca Individual",
+        "preco": "R$ 100,00"
+      },
+      {
+        "grupo": "Trava Auxiliar Tetra",
+        "nome": "Arouca Par",
+        "preco": "R$ 100,00"
+      },
+      {
+        "grupo": "Fechadura Porta de Enrolar Yale",
+        "nome": "Yale",
+        "preco": "R$ 60,00",
+        "condicao": "Balcão"
+      },
+      {
+        "grupo": "Fechadura Porta de Enrolar Yale",
+        "nome": "Instalação",
+        "preco": "R$ 85,00"
+      },
+      {
+        "grupo": "Fechadura Porta de Enrolar Tetra",
+        "nome": "Tetra",
+        "preco": "R$ 80,00",
+        "condicao": "Balcão"
+      },
+      {
+        "grupo": "Fechadura Porta de Enrolar Tetra",
+        "nome": "Instalação",
+        "preco": "R$ 30,00"
+      },
+      {
+        "grupo": "Fechadura Lateral (Porta de Aço)",
+        "nome": "Tetra",
+        "preco": "R$ 130,00",
+        "condicao": "Balcão"
+      },
+      {
+        "grupo": "Fechadura Lateral (Porta de Aço)",
+        "nome": "Instalação",
+        "preco": "R$ 180,00",
+        "condicao": "Com Corte"
+      },
+      {
+        "grupo": "Fechadura Lateral (Porta de Aço)",
+        "nome": "Instalação",
+        "preco": "R$ 150,00",
+        "condicao": "Sem Corte"
+      },
+      {
+        "grupo": "Fechadura Porta de Ferro",
+        "nome": "Stam Estreita Completa",
+        "preco": "R$ 95,00",
+        "condicao": "Balcão"
+      },
+      {
+        "grupo": "Fechadura Porta de Ferro",
+        "nome": "Stam Tetra",
+        "preco": "R$ 82,00",
+        "condicao": "Balcão"
+      },
+      {
+        "grupo": "Fechadura Porta de Ferro",
+        "nome": "Instalação",
+        "preco": "R$ 350,00",
+        "condicao": "Com Corte"
+      },
+      {
+        "grupo": "Fechadura Porta de Ferro",
+        "nome": "Instalação",
+        "preco": "R$ 180,00",
+        "condicao": "Sem Corte"
+      },
+      {
+        "grupo": "Olho Mágico",
+        "nome": "Olho Mágico",
+        "preco": "R$ 20,00",
+        "condicao": "Balcão"
+      },
+      {
+        "grupo": "Olho Mágico",
+        "nome": "Instalação",
+        "preco": "R$ 60,00",
+        "condicao": "Com Corte"
+      },
+      {
+        "grupo": "Olho Mágico",
+        "nome": "Instalação",
+        "preco": "R$ 35,00",
+        "condicao": "Sem Corte"
+      },
+      {
+        "grupo": "Ferolho",
+        "nome": "Ferolho",
+        "preco": "R$ 20,00",
+        "condicao": "Balcão"
+      },
+      {
+        "grupo": "Ferolho",
+        "nome": "Instalação",
+        "preco": "R$ 55,00",
+        "condicao": "Com Corte"
+      },
+      {
+        "grupo": "Ferolho",
+        "nome": "Instalação",
+        "preco": "R$ 35,00",
+        "condicao": "Sem Corte"
+      },
+      {
+        "grupo": "Trinco de Porta",
+        "nome": "Trinco de Porta",
+        "preco": "R$ 20,00",
+        "condicao": "Balcão"
+      },
+      {
+        "grupo": "Trinco de Porta",
+        "nome": "Instalação",
+        "preco": "R$ 30,00"
+      },
+      {
+        "grupo": "Fechadura de Sobrepor Yale",
+        "nome": "Yale",
+        "preco": "R$ 80,00",
+        "condicao": "Balcão"
+      },
+      {
+        "grupo": "Fechadura de Sobrepor Yale",
+        "nome": "Instalação",
+        "preco": "R$ 180,00",
+        "condicao": "Com Corte"
+      },
+      {
+        "grupo": "Fechadura de Sobrepor Yale",
+        "nome": "Instalação",
+        "preco": "R$ 150,00",
+        "condicao": "Sem Corte"
+      },
+      {
+        "grupo": "Fechadura de Sobrepor Tetra",
+        "nome": "Tetra",
+        "preco": "R$ 100,00",
+        "condicao": "Balcão"
+      },
+      {
+        "grupo": "Fechadura de Sobrepor Tetra",
+        "nome": "Instalação",
+        "preco": "R$ 180,00",
+        "condicao": "Com Corte"
+      },
+      {
+        "grupo": "Fechadura de Sobrepor Tetra",
+        "nome": "Instalação",
+        "preco": "Sob consulta",
+        "condicao": "Sem Corte"
+      },
+      {
+        "grupo": "Cadeado de Chão",
+        "nome": "Cadeado Simples",
+        "preco": "R$ 130,00",
+        "condicao": "Balcão"
+      },
+      {
+        "grupo": "Cadeado de Chão",
+        "nome": "Instalação",
+        "preco": "R$ 250,00",
+        "condicao": "Com Corte"
+      },
+      {
+        "grupo": "Cadeado de Chão",
+        "nome": "Instalação",
+        "preco": "R$ 180,00",
+        "condicao": "Sem Corte"
+      },
+      {
+        "grupo": "Cadeado de Chão",
+        "nome": "Cadeado Automático",
+        "preco": "R$ 170,00",
+        "condicao": "Balcão"
+      },
+      {
+        "grupo": "Cadeado de Chão",
+        "nome": "Instalação",
+        "preco": "R$ 230,00",
+        "condicao": "Com Corte"
+      },
+      {
+        "grupo": "Cadeado de Chão",
+        "nome": "Instalação",
+        "preco": "R$ 180,00",
+        "condicao": "Sem Corte"
+      },
+      {
+        "grupo": "Cadeado de Chão",
+        "nome": "Refil",
+        "preco": "R$ 90,00",
+        "condicao": "Sem Corte"
+      },
+      {
+        "grupo": "Batom (Pega Ladrão)",
+        "nome": "Batom",
+        "preco": "R$ 20,00",
+        "condicao": "Balcão"
+      },
+      {
+        "grupo": "Batom (Pega Ladrão)",
+        "nome": "Instalação",
+        "preco": "R$ 55,00"
+      }
+    ]
+  },
+  {
+    "id": "cadeados",
+    "nome": "Cadeados",
+    "icone": "🔒",
+    "descricao": "Cadeados de diversos tamanhos, modelos e segredos.",
+    "produtos": [
+      {
+        "grupo": "Cadeado Yale",
+        "nome": "Nº 20",
+        "desc": "Cadeado de latão Yale, 20mm.",
+        "preco": "R$ 18,00",
+        "foto": "yale"
+      },
+      {
+        "grupo": "Cadeado Yale",
+        "nome": "Nº 25",
+        "desc": "Cadeado de latão Yale, 25mm.",
+        "preco": "R$ 20,00",
+        "foto": "yale"
+      },
+      {
+        "grupo": "Cadeado Yale",
+        "nome": "Nº 30",
+        "desc": "Cadeado de latão Yale, 30mm.",
+        "preco": "R$ 30,00",
+        "foto": "yale"
+      },
+      {
+        "grupo": "Cadeado Yale",
+        "nome": "Nº 35",
+        "desc": "Cadeado de latão Yale, 35mm.",
+        "preco": "R$ 35,00",
+        "foto": "yale"
+      },
+      {
+        "grupo": "Cadeado Yale",
+        "nome": "Nº 40",
+        "desc": "Cadeado de latão Yale, 40mm.",
+        "preco": "R$ 40,00",
+        "foto": "yale"
+      },
+      {
+        "grupo": "Cadeado Yale",
+        "nome": "Nº 45",
+        "desc": "Cadeado de latão Yale, 45mm.",
+        "preco": "R$ 45,00",
+        "foto": "yale"
+      },
+      {
+        "grupo": "Cadeado Yale",
+        "nome": "Nº 50",
+        "desc": "Cadeado de latão Yale, 50mm.",
+        "preco": "R$ 50,00",
+        "foto": "yale"
+      },
+      {
+        "grupo": "Cadeado Yale",
+        "nome": "Nº 55",
+        "desc": "Cadeado de latão Yale, 55mm.",
+        "preco": "R$ 55,00",
+        "foto": "yale"
+      },
+      {
+        "grupo": "Cadeado Yale",
+        "nome": "Nº 60",
+        "desc": "Cadeado de latão Yale, 60mm.",
+        "preco": "R$ 85,00",
+        "foto": "yale"
+      },
+      {
+        "grupo": "Cadeado de Segredo",
+        "nome": "Stam 25",
+        "desc": "Cadeado de segredo, modelo Stam.",
+        "preco": "R$ 25,00",
+        "foto": "segredo"
+      },
+      {
+        "grupo": "Cadeado de Segredo",
+        "nome": "Stam 40",
+        "desc": "Cadeado de segredo, modelo Stam.",
+        "preco": "R$ 50,00",
+        "foto": "segredo"
+      },
+      {
+        "grupo": "Cadeado de Mala",
+        "nome": "Stam 25",
+        "desc": "Cadeado de mala, modelo Stam.",
+        "preco": "R$ 25,00",
+        "foto": "mala"
+      },
+      {
+        "grupo": "Cadeado de Mala",
+        "nome": "Stam 40",
+        "desc": "Cadeado de mala, modelo Stam.",
+        "preco": "R$ 45,00",
+        "foto": "mala"
+      },
+      {
+        "grupo": "Trava Multilock",
+        "nome": "Trava Multilock",
+        "desc": "Instalação à base de troca.",
+        "preco": "R$ 120,00",
+        "foto": "multilock"
+      },
+      {
+        "grupo": "Cadeado Tetra",
+        "nome": "Nº 40",
+        "desc": "Cadeado com chave tetra.",
+        "preco": "R$ 100,00",
+        "foto": "tetra"
+      },
+      {
+        "grupo": "Cadeado Tetra",
+        "nome": "Nº 50",
+        "desc": "Cadeado com chave tetra.",
+        "preco": "R$ 130,00",
+        "foto": "tetra"
+      },
+      {
+        "grupo": "Cadeado Tetra",
+        "nome": "Nº 60",
+        "desc": "Cadeado com chave tetra.",
+        "preco": "R$ 160,00",
+        "foto": "tetra"
+      },
+      {
+        "grupo": "Cadeado de Haste Longa",
+        "nome": "30x50",
+        "desc": "Haste longa, medida 30x50.",
+        "preco": "R$ 28,00",
+        "foto": "hastelonga"
+      },
+      {
+        "grupo": "Cadeado de Haste Longa",
+        "nome": "30x75",
+        "desc": "Haste longa, medida 30x75.",
+        "preco": "R$ 29,00",
+        "foto": "hastelonga"
+      },
+      {
+        "grupo": "Cadeado de Haste Longa",
+        "nome": "35x50",
+        "desc": "Haste longa, medida 35x50.",
+        "preco": "R$ 60,00",
+        "foto": "hastelonga"
+      }
+    ]
+  },
+  {
+    "id": "bateria",
+    "nome": "Bateria",
+    "icone": "🔋",
+    "descricao": "Pilhas e baterias para controles, relógios e outros dispositivos.",
+    "produtos": [
+      {
+        "nome": "Bateria 2032, 2025, 2016, 1616, 1620, 1220",
+        "desc": "Baterias tipo botão para controles e relógios.",
+        "preco": "R$ 10,00",
+        "foto": "bat2032"
+      },
+      {
+        "nome": "Bateria de controle 27 A (fina)",
+        "desc": "Bateria alcalina 12V para controles e alarmes.",
+        "preco": "R$ 10,00",
+        "foto": "bat12v"
+      },
+      {
+        "nome": "Bateria de controle 23 A (grossa)",
+        "desc": "Mini bateria alcalina 12V.",
+        "preco": "R$ 18,00",
+        "foto": "minibat12v"
+      }
+    ]
+  }
+]

@@ -1,0 +1,128 @@
+/**
+ * =====================================================================
+ * AJUSTES-FOTOS.CSS - TAMANHO E ENQUADRAMENTO DE CADA FOTO
+ * =====================================================================
+ *
+ * As fotos vêm de fontes diferentes (deitadas, em pé, com muito fundo
+ * branco...). Aqui ficam os ajustes finos de cada uma, separados do
+ * visual geral para serem fáceis de achar e mexer.
+ *
+ * Como funciona: cada foto de produto é desenhada em
+ *     <div class="product__icon" data-cat="miolos" data-foto="papaiz">
+ * e cada foto de grupo de fechadura em
+ *     <div class="lock-group__photo" data-grupo="Fechadura Gorge">
+ * então dá para mirar uma foto específica pelo data-foto / data-grupo,
+ * ou uma categoria inteira pelo data-cat.
+ *
+ * Dica: o tamanho da foto de um grupo de fechadura também pode ser
+ * escolhido no editor (Pequena/Média/Grande); essa escolha é gravada em
+ * src/dados/tamanhos-grupos.json e vence a largura definida aqui.
+ * =====================================================================
+ */
+
+/* =========================================================
+   1. FOTOS DE PRODUTO (.product__icon)
+   Padrão: 140 x 78 px (ver catalogo.css, seção 9).
+   ========================================================= */
+
+/* Cópia de chaves: chave deitada, quadro mais largo */
+.product__icon[data-foto="chave"]{
+  width:190px; height:104px;
+  padding: 10px;
+}
+.product__icon[data-foto="peccinin"],
+.product__icon[data-foto="garem"],
+.product__icon[data-foto="gold4"],
+.product__icon[data-foto="reposicaolinear"],
+.product__icon[data-foto="codificacaocliente"]{
+  width:90px; height:130px;
+}
+.product__icon[data-foto="gold4"] img,
+.product__icon[data-foto="reposicaolinear"] img,
+.product__icon[data-foto="codificacaocliente"] img{
+  transform: scale(1.45);
+}
+.product__icon[data-foto="telecomando_original"],
+.product__icon[data-foto="chave_codificada_moto"]{
+  width:140px; height:130px;
+}
+.product__icon[data-foto="reprogramacao_canivete"]{
+  width:140px; height:150px;
+}
+.product__icon[data-foto="hastelonga"]{
+  width:76px; height:118px;
+}
+.product__icon[data-foto="hastelonga"] img{
+  object-fit: cover !important;
+}
+.product__icon[data-foto="estilofer"]{
+  width:80px; height:100px;
+}
+.product__icon[data-foto="estilofer"] img{
+  object-fit: cover !important;
+}
+.product__icon[data-foto="multilock"] img,
+.product__icon[data-foto="tetra"] img,
+.product__icon[data-foto="mala"] img{
+  object-fit: cover !important;
+}
+.product__icon[data-foto="segredo"] img{
+  object-fit: cover !important;
+}
+.product__icon[data-foto="bat2032"],
+.product__icon[data-foto="bat12v"],
+.product__icon[data-foto="minibat12v"]{
+  width:190px; height:150px;
+}
+.product__icon[data-foto="bat2032"] img,
+.product__icon[data-foto="minibat12v"] img{
+  object-fit: cover !important;
+}
+.product__icon[data-foto="bat12v"] img{
+  object-fit: contain !important;
+}
+.product__icon[data-cat="miolos"]{
+  width:190px; height:150px;
+  padding: 6px;
+}
+.product__icon[data-cat="miolos"] img{
+  object-fit: contain !important;
+}
+.product__icon[data-cat="aberturas"]{
+  width:190px; height:150px;
+  padding: 6px;
+}
+.product__icon[data-cat="aberturas"] img{
+  object-fit: contain !important;
+}
+
+/* =========================================================
+   2. FOTOS DE GRUPO DE FECHADURA (.lock-group__photo)
+   Padrão: 84 px de largura, altura do grupo inteiro.
+   ========================================================= */
+.lock-group__photo[data-grupo="Maçaneta"] img{ transform: scale(1.18); }
+.lock-group__photo[data-grupo="Maçaneta"]{ width:150px; }
+.lock-group__photo[data-grupo="Fechadura Tetra Caixa de 40mm"]{ width:110px; }
+.lock-group__photo[data-grupo="Fechadura Yale Caixa de 40mm"]{ width:170px; }
+.lock-group__photo[data-grupo="Fechadura Yale Caixa de 45 e 55mm"]{ width:150px; }
+.lock-group__photo[data-grupo="Fechadura Yale Caixa de 45 e 55mm"] img{ object-fit:cover; object-position:center; }
+
+.lock-group__photo[data-grupo="Fechadura Yale Caixa de 40mm"] img{ width:100%; height:100%; object-fit:contain; object-position:center; background:#fff; display:block; }
+.lock-group__photo[data-grupo="Mola Hidráulica"] img{ transform: scale(1.18); }
+.lock-group__photo[data-grupo="Mola Hidráulica"]{ width:150px; }
+.lock-group__photo[data-grupo="Cadeado de Chão"]{ width:140px; }
+.lock-group__photo[data-grupo="Batom (Pega Ladrão)"]{ width:150px; }
+.lock-group__photo[data-grupo="Fechadura Porta de Enrolar Tetra"]{ width:150px; }
+.lock-group__photo[data-grupo="Fechadura Porta de Enrolar Yale"]{ width:150px; }
+.lock-group__photo[data-grupo="Trava de Vitrine"]{ width:120px; }
+.lock-group__photo[data-grupo="Fechadura Porta de Divisória"]{ width:150px; }
+.lock-group__photo[data-grupo="Olho Mágico"]{ width:130px; }
+.lock-group__photo[data-grupo="Ferolho"]{ width:150px; }
+.lock-group__photo[data-grupo="Trinco de Porta"]{ width:130px; }
+.lock-group__photo[data-grupo="Fechadura de Sobrepor Yale"]{ width:150px; }
+.lock-group__photo[data-grupo="Fechadura de Sobrepor Tetra"]{ width:150px; }
+.lock-group__photo[data-grupo="Fechadura Porta de Ferro"] img{ object-position: 30% center; }
+.lock-group__photo[data-grupo="Fechadura Lateral (Porta de Aço)"]{ width:150px; }
+.lock-group__photo[data-grupo="Trava Auxiliar Tetra"]{ width:190px; }
+.lock-group__photo[data-grupo="Fechadura Trio Tetra"]{ width:150px; }
+.lock-group__photo[data-grupo="Trava Auxiliar Tetra"] img{ object-position: center center; }

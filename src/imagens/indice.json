@@ -1,0 +1,164 @@
+{
+  "logo": "logo.png",
+  "mapas": {
+    "IMAGENS_CHAVEIRINHO": {
+      "pasta": "chaveirinhos",
+      "descricao": "Chaveirinhos (campo \"foto\")",
+      "fotos": {
+        "argolas": "chaveirinhos/argolas.png",
+        "identificador": "chaveirinhos/identificador.png",
+        "marca": "chaveirinhos/marca.png",
+        "mosquetao": "chaveirinhos/mosquetao.png",
+        "personagens": "chaveirinhos/personagens.png"
+      }
+    },
+    "IMAGENS_CHAVE": {
+      "pasta": "chaves",
+      "descricao": "Cópia de chaves (campo \"tipo\")",
+      "fotos": {
+        "yale": "chaves/yale.png",
+        "tetra": "chaves/tetra.png",
+        "aco": "chaves/aco.png",
+        "gorge": "chaves/gorge.png",
+        "multiponto-simples": "chaves/multiponto-simples.png",
+        "multiponto": "chaves/multiponto.png",
+        "multiponto-plastica": "chaves/multiponto-plastica.png",
+        "keso": "chaves/keso.png"
+      }
+    },
+    "IMAGENS_CONTROLE": {
+      "pasta": "controles",
+      "descricao": "Controles de portão",
+      "fotos": {
+        "codificacaocliente": "controles/codificacaocliente.jpg",
+        "ideal": "controles/ideal.png",
+        "peccinin": "controles/peccinin.jpg",
+        "garem": "controles/garem.jpg",
+        "rcg": "controles/rcg.jpg",
+        "gold4": "controles/gold4.jpg",
+        "reposicaolinear": "controles/reposicaolinear.jpg"
+      }
+    },
+    "IMAGENS_FECHADURA": {
+      "pasta": "fechaduras",
+      "descricao": "Fechaduras: uma foto por GRUPO (chave = nome do grupo)",
+      "fotos": {
+        "Fechadura Yale Caixa de 45 e 55mm": "fechaduras/fechadura-yale-caixa-de-45-e-55mm.png",
+        "Fechadura Trio Tetra": "fechaduras/fechadura-trio-tetra.jpg",
+        "Trava Auxiliar Tetra": "fechaduras/trava-auxiliar-tetra.jpg",
+        "Fechadura Porta de Ferro": "fechaduras/fechadura-porta-de-ferro.jpg",
+        "Fechadura Lateral (Porta de Aço)": "fechaduras/fechadura-lateral-porta-de-aco.jpg",
+        "Fechadura de Sobrepor Tetra": "fechaduras/fechadura-de-sobrepor-tetra.jpg",
+        "Fechadura de Sobrepor Yale": "fechaduras/fechadura-de-sobrepor-yale.jpg",
+        "Ferolho": "fechaduras/ferolho.jpg",
+        "Trinco de Porta": "fechaduras/trinco-de-porta.jpg",
+        "Olho Mágico": "fechaduras/olho-magico.jpg",
+        "Cadeado de Chão": "fechaduras/cadeado-de-chao.jpg",
+        "Batom (Pega Ladrão)": "fechaduras/batom-pega-ladrao.jpg",
+        "Fechadura Porta de Enrolar Tetra": "fechaduras/fechadura-porta-de-enrolar-tetra.jpg",
+        "Fechadura Porta de Enrolar Yale": "fechaduras/fechadura-porta-de-enrolar-yale.jpg",
+        "Fechadura Tetra Caixa de 40mm": "fechaduras/fechadura-tetra-caixa-de-40mm.jpg",
+        "Maçaneta": "fechaduras/macaneta.png",
+        "Fechadura Yale Caixa de 40mm": "fechaduras/fechadura-yale-caixa-de-40mm.png",
+        "Fechadura Porta de Divisória": "fechaduras/fechadura-porta-de-divisoria.png",
+        "Trava de Vitrine": "fechaduras/trava-de-vitrine.png",
+        "Mola Hidráulica": "fechaduras/mola-hidraulica.png",
+        "Fechadura Perfil Caixa de 22mm": "fechaduras/fechadura-perfil-caixa-de-22mm.png",
+        "Bico de Papagaio": "fechaduras/bico-de-papagaio.png",
+        "Fechadura Porta de Vidro": "fechaduras/fechadura-porta-de-vidro.png",
+        "Fechadura Porta de Banheiro": "fechaduras/fechadura-porta-de-banheiro.png",
+        "Fechadura Gorge": "fechaduras/fechadura-gorge.png"
+      }
+    },
+    "IMAGENS_CADEADO": {
+      "pasta": "cadeados",
+      "descricao": "Cadeados",
+      "fotos": {
+        "segredo": "cadeados/segredo.png",
+        "mala": "cadeados/mala.png",
+        "multilock": "cadeados/multilock.png",
+        "tetra": "cadeados/tetra.png",
+        "estilofer": "cadeados/estilofer.png",
+        "hastelonga": "cadeados/hastelonga.png",
+        "yale": "cadeados/yale.jpg"
+      }
+    },
+    "IMAGENS_MIOLO": {
+      "pasta": "miolos",
+      "descricao": "Miolos",
+      "fotos": {
+        "papaiz": "miolos/papaiz.jpg",
+        "stam": "miolos/stam.jpg",
+        "pado": "miolos/pado.jpg",
+        "lockwell": "miolos/lockwell.jpg",
+        "fama": "miolos/fama.jpg",
+        "outros": "miolos/outros.jpg"
+      }
+    },
+    "IMAGENS_GAVETA": {
+      "pasta": "miolos-gaveta",
+      "descricao": "Miolos de gaveta",
+      "fotos": {
+        "curto": "miolos-gaveta/curto.jpg",
+        "longo": "miolos-gaveta/longo.jpg"
+      }
+    },
+    "IMAGENS_MIOLO_GRANDE": {
+      "pasta": "miolos-grandes",
+      "descricao": "Miolos grandes",
+      "fotos": {
+        "papaiz_original": "miolos-grandes/papaiz-original.jpg",
+        "gold": "miolos-grandes/gold.jpg",
+        "lafont": "miolos-grandes/lafont.jpg",
+        "fama_grande": "miolos-grandes/fama-grande.jpg",
+        "lockwell_grande": "miolos-grandes/lockwell-grande.jpg"
+      }
+    },
+    "IMAGENS_MIOLO_TETRA": {
+      "pasta": "miolos-tetra",
+      "descricao": "Miolos tetra",
+      "fotos": {
+        "stam_grande": "miolos-tetra/stam-grande.jpg",
+        "stam_pequeno": "miolos-tetra/stam-pequeno.jpg",
+        "lockwell_tetra": "miolos-tetra/lockwell-tetra.jpg",
+        "alianca_tetra": "miolos-tetra/alianca-tetra.jpg"
+      }
+    },
+    "IMAGENS_BATERIA": {
+      "pasta": "baterias",
+      "descricao": "Baterias",
+      "fotos": {
+        "bat2032": "baterias/bat2032.jpg",
+        "bat12v": "baterias/bat12v.jpg",
+        "minibat12v": "baterias/minibat12v.jpg"
+      }
+    },
+    "IMAGENS_CODIFICADAS": {
+      "pasta": "chaves-codificadas",
+      "descricao": "Chaves codificadas",
+      "fotos": {
+        "reprogramacao_canivete": "chaves-codificadas/reprogramacao-canivete.jpg",
+        "telecomando_original": "chaves-codificadas/telecomando-original.jpg",
+        "chave_codificada_moto": "chaves-codificadas/chave-codificada-moto.png",
+        "chave_codificada_simples": "chaves-codificadas/chave-codificada-simples.png"
+      }
+    },
+    "IMAGENS_ABERTURAS": {
+      "pasta": "aberturas",
+      "descricao": "Aberturas",
+      "fotos": {
+        "chave_tetra": "aberturas/chave-tetra.jpg",
+        "cadeado_chao": "aberturas/cadeado-chao.jpg",
+        "chave_yale": "aberturas/chave-yale.jpg",
+        "autos_geral": "aberturas/autos-geral.jpg",
+        "cofre_parede": "aberturas/cofre-parede.jpg",
+        "cofre_chao": "aberturas/cofre-chao.jpg"
+      }
+    },
+    "IMAGENS_CUSTOM": {
+      "pasta": "custom",
+      "descricao": "Fotos adicionadas ou trocadas pelo editor (têm prioridade)",
+      "fotos": {}
+    }
+  }
+}
